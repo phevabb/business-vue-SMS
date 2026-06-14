@@ -6,7 +6,17 @@ import AppMenuItem from './AppMenuItem.vue';
 const model = ref([
     {
         label: 'Home',
-        items: [{ label: 'Dashboard', icon: 'pi pi-fw pi-home', to: '/' }]
+        items: [
+            { label: 'Dashboard', icon: 'pi pi-fw pi-home', to: '/dashboard' },
+            { label: 'Subscription   & Plan', icon: 'pi pi-fw pi-tag', to: '/subscription' },
+            { label: 'School Domain', icon: 'pi pi-fw pi-globe', to: '/domain' },
+            { label: 'sms', icon: 'pi pi-fw pi-comments', to: '/sms' },
+            { label: 'Billing Summary', icon: 'pi pi-fw pi-dollar', to: '/billing' }
+
+
+
+
+        ]
     },
     {
         label: 'UI Components',
@@ -131,7 +141,7 @@ const model = ref([
             {
                 label: 'View Source',
                 icon: 'pi pi-fw pi-github',
-                url: 'https://github.com/primefaces/sakai-vue',
+                url: 'https://github.com/prk',
                 target: '_blank'
             }
         ]
