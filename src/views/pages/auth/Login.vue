@@ -13,257 +13,645 @@ const showPassword = ref(false)
 const loading = ref(false)
 const error = ref('')
 
-// ✅ LOGIN FUNCTION
 const handleLogin = async () => {
-    error.value = ''
-    loading.value = true
+  error.value = ''
+  loading.value = true
 
-    try {
-        const res = await login({
-            email: email.value,
-            password: password.value
-        })
+  try {
+    const res = await login({
+      email: email.value,
+      password: password.value
+    })
 
-        console.log('login response:', res)
+    console.log('login response:', res)
 
-        /**
-         * ✅ IMPORTANT:
-         * If your login() helper does NOT already save tokens,
-         * uncomment these two lines:
-         */
-        localStorage.setItem('access', res.data.access)
-        localStorage.setItem('refresh', res.data.refresh)
+    localStorage.setItem('access', res.data.access)
+    localStorage.setItem('refresh', res.data.refresh)
+    localStorage.setItem('rememberMe', rememberMe.value ? 'true' : 'false')
 
-        localStorage.setItem('rememberMe', rememberMe.value ? 'true' : 'false')
-
-        // ✅ use replace so login page is removed from history
-        await router.replace('/dashboard')
-    } catch (err) {
-        console.error('login error:', err)
-        error.value = 'Invalid email or password'
-    } finally {
-        loading.value = false
-    }
+    await router.replace('/dashboard')
+  } catch (err) {
+    console.error('login error:', err)
+    error.value = 'Invalid email or password'
+  } finally {
+    loading.value = false
+  }
 }
 </script>
 
 <template>
-    <div class="min-h-screen bg-[#f8fafc] flex items-center justify-center px-4">
-        <div class="w-full max-w-md">
-            <!-- Premium Brand Header -->
-            <div class="text-center mb-8">
-                <div class="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-600 to-indigo-600 shadow-lg shadow-blue-100">
-                    <span class="text-white text-lg font-bold tracking-wide">P</span>
-                </div>
-
-                <h1 class="text-3xl font-semibold tracking-tight text-gray-900">Welcome back</h1>
-                <p class="mt-2 text-sm text-gray-500">
-                    Sign in to access your school workspace on Phena SMS
-                </p>
-            </div>
-
-            <!-- Card -->
-            <div class="rounded-3xl border border-gray-200 bg-white p-8 shadow-[0_20px_60px_rgba(15,23,42,0.08)]">
-                <!-- Error -->
-                <div v-if="error" class="mb-5 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">
-                    {{ error }}
-                </div>
-
-                <!-- Form -->
-                <form @submit.prevent="handleLogin" class="space-y-5">
-                    <!-- Email -->
-                    <div>
-                        <label class="label">Email Address</label>
-                        <input
-                            v-model="email"
-                            type="email"
-                            placeholder="admin@school.com"
-                            class="input"
-                            required
-                        />
-                    </div>
-
-                    <!-- Password -->
-                    <div>
-                        <div class="mb-1 flex items-center justify-between">
-                            <label class="label !mb-0">Password</label>
-                            <button
-                                type="button"
-                                class="text-xs font-medium text-blue-600 hover:text-blue-700"
-                            >
-                                Forgot password?
-                            </button>
-                        </div>
-
-                        <div class="relative">
-                            <input
-                                v-model="password"
-                                :type="showPassword ? 'text' : 'password'"
-                                placeholder="Enter your password"
-                                class="input pr-12"
-                                required
-                            />
-
-                            <!-- Eye Toggle -->
-                            <button
-                                type="button"
-                                class="eye-btn"
-                                @click="showPassword = !showPassword"
-                                :aria-label="showPassword ? 'Hide password' : 'Show password'"
-                            >
-                                <svg
-                                    v-if="!showPassword"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    fill="none"
-                                    viewBox="0 0 24 24"
-                                    stroke-width="1.8"
-                                    stroke="currentColor"
-                                    class="h-5 w-5"
-                                >
-                                    <path
-                                        stroke-linecap="round"
-                                        stroke-linejoin="round"
-                                        d="M2.036 12.322a1.012 1.012 0 010-.644C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.437 0 .644C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.964-7.178z"
-                                    />
-                                    <path
-                                        stroke-linecap="round"
-                                        stroke-linejoin="round"
-                                        d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-                                    />
-                                </svg>
-
-                                <svg
-                                    v-else
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    fill="none"
-                                    viewBox="0 0 24 24"
-                                    stroke-width="1.8"
-                                    stroke="currentColor"
-                                    class="h-5 w-5"
-                                >
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M3 3l18 18" />
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M10.477 10.485A3 3 0 0012 15a2.99 2.99 0 002.121-.879" />
-                                    <path
-                                        stroke-linecap="round"
-                                        stroke-linejoin="round"
-                                        d="M9.88 5.09A9.953 9.953 0 0112 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.437 0 .644a10.05 10.05 0 01-4.043 5.127M6.228 6.228A10.012 10.012 0 002.037 11.68c-.07.207-.07.437 0 .644A10.013 10.013 0 006.6 17.728"
-                                    />
-                                </svg>
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- Remember me -->
-                    <div class="flex items-center justify-between">
-                        <label class="flex items-center gap-3 text-sm text-gray-600 cursor-pointer">
-                            <input
-                                v-model="rememberMe"
-                                type="checkbox"
-                                class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-                            />
-                            Remember me
-                        </label>
-                    </div>
-
-                    <!-- Button -->
-                    <button type="submit" :disabled="loading" class="submit-btn">
-                        <span v-if="loading">Signing in...</span>
-                        <span v-else>Sign In</span>
-                    </button>
-                </form>
-
-                <!-- Footer -->
-                <div class="mt-6 text-center text-sm text-gray-500">
-                    Not registered?
-                    <button
-                        type="button"
-                        @click="router.push('/auth/register')"
-                        class="ml-1 font-medium text-blue-600 hover:text-blue-700 hover:underline"
-                    >
-                        Create an account
-                    </button>
-                </div>
-            </div>
-
-            <!-- Bottom note -->
-            <div class="mt-6 text-center text-xs text-gray-400">
-                © 2026 Phena Systems. All rights reserved.
-            </div>
+  <main class="login-page">
+    <section class="login-card">
+      <!-- LEFT BRAND PANEL -->
+      <aside class="brand-panel">
+        <div class="logo-badge">
+          P
         </div>
-    </div>
+
+        <div class="hero-content">
+          <p class="eyebrow">PHENA SCHOOL MANAGEMENT SYSTEM</p>
+
+          <h1>
+            Welcome back to your school workspace.
+          </h1>
+
+          <p class="subtitle">
+            Sign in securely to manage admissions, academics, fees, attendance,
+            reports, and daily school operations.
+          </p>
+        </div>
+
+        <div class="trust-box">
+          <span class="shield-icon">✓</span>
+          <div>
+            <strong>Secure access</strong>
+            <p>Your school data is protected with encrypted authentication.</p>
+          </div>
+        </div>
+      </aside>
+
+      <!-- RIGHT LOGIN PANEL -->
+      <section class="form-panel">
+        <div class="form-header">
+          <p class="step-label">Account Access</p>
+          <h2>Sign In</h2>
+          <p>Enter your login details to continue to your dashboard.</p>
+        </div>
+
+        <div v-if="error" class="error-box">
+          <span>!</span>
+          <p>{{ error }}</p>
+        </div>
+
+        <form class="login-form" @submit.prevent="handleLogin">
+          <div class="field">
+            <label>Email Address</label>
+            <input
+              v-model.trim="email"
+              type="email"
+              placeholder="admin@school.com"
+              autocomplete="email"
+              required
+            />
+          </div>
+
+          <div class="field">
+            <div class="password-label-row">
+              <label>Password</label>
+
+              <button
+                type="button"
+                class="forgot-btn"
+                @click="router.push('/auth/forgot-password')"
+              >
+                Forgot password?
+              </button>
+            </div>
+
+            <div class="password-wrap">
+              <input
+                v-model="password"
+                :type="showPassword ? 'text' : 'password'"
+                placeholder="Enter your password"
+                autocomplete="current-password"
+                required
+              />
+
+              <button
+                type="button"
+                class="password-toggle"
+                :aria-label="showPassword ? 'Hide password' : 'Show password'"
+                @click="showPassword = !showPassword"
+              >
+                <svg
+                  v-if="!showPassword"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke-width="1.8"
+                  stroke="currentColor"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M2.036 12.322a1.012 1.012 0 010-.644C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.437 0 .644C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.964-7.178z"
+                  />
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                  />
+                </svg>
+
+                <svg
+                  v-else
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke-width="1.8"
+                  stroke="currentColor"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M3 3l18 18"
+                  />
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M10.477 10.485A3 3 0 0012 15a2.99 2.99 0 002.121-.879"
+                  />
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M9.88 5.09A9.953 9.953 0 0112 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.437 0 .644a10.05 10.05 0 01-4.043 5.127M6.228 6.228A10.012 10.012 0 002.037 11.68c-.07.207-.07.437 0 .644A10.013 10.013 0 006.6 17.728"
+                  />
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <div class="form-options">
+            <label class="remember-row">
+              <input v-model="rememberMe" type="checkbox" />
+              <span>Remember me</span>
+            </label>
+          </div>
+
+          <button class="submit-btn" type="submit" :disabled="loading">
+            <span v-if="loading" class="spinner"></span>
+            <span>{{ loading ? 'Signing in...' : 'Sign In' }}</span>
+          </button>
+        </form>
+
+        <div class="register-link">
+          <span>Not registered?</span>
+
+          <button
+            type="button"
+            @click="router.push('/auth/register')"
+          >
+            Create an account
+          </button>
+        </div>
+
+        <p class="copyright">
+          © 2026 Phena Systems. All rights reserved.
+        </p>
+      </section>
+    </section>
+  </main>
 </template>
 
 <style scoped>
-.label {
-    display: block;
-    margin-bottom: 0.45rem;
-    font-size: 0.85rem;
-    font-weight: 600;
-    color: #111827;
+.login-page {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 32px;
+  color: #ffffff;
+  background:
+    radial-gradient(circle at top left, rgba(220, 174, 84, 0.22), transparent 32%),
+    radial-gradient(circle at bottom right, rgba(22, 139, 118, 0.26), transparent 38%),
+    linear-gradient(135deg, #06131f 0%, #0b2137 48%, #071926 100%);
+  font-family:
+    Inter,
+    ui-sans-serif,
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
 }
 
-.input {
-    width: 100%;
-    border-radius: 0.95rem;
-    border: 1px solid #e5e7eb;
-    background: #ffffff;
-    padding: 0.85rem 1rem;
-    font-size: 0.95rem;
-    color: #111827;
-    transition: all 0.2s ease;
+.login-card {
+  width: min(1120px, 100%);
+  min-height: 690px;
+  display: grid;
+  grid-template-columns: 0.95fr 1.1fr;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 34px;
+  background: rgba(255, 255, 255, 0.075);
+  box-shadow:
+    0 40px 120px rgba(0, 0, 0, 0.45),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(26px);
 }
 
-.input::placeholder {
-    color: #9ca3af;
+.brand-panel {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 48px;
+  padding: 48px;
+  background:
+    linear-gradient(150deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.035)),
+    radial-gradient(circle at top, rgba(212, 169, 87, 0.26), transparent 42%);
 }
 
-.input:focus {
-    outline: none;
-    border-color: #2563eb;
-    box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.08);
+.logo-badge {
+  width: 64px;
+  height: 64px;
+  display: grid;
+  place-items: center;
+  border-radius: 20px;
+  color: #071926;
+  background: linear-gradient(135deg, #f5d58c, #c99635);
+  font-size: 28px;
+  font-weight: 900;
+  box-shadow: 0 20px 50px rgba(212, 169, 87, 0.28);
 }
 
-.eye-btn {
-    position: absolute;
-    right: 0.85rem;
-    top: 50%;
-    transform: translateY(-50%);
-    color: #6b7280;
-    background: transparent;
-    border: none;
-    padding: 0;
-    cursor: pointer;
-    transition: color 0.2s ease;
+.hero-content {
+  max-width: 700px;
 }
 
-.eye-btn:hover {
-    color: #2563eb;
+.eyebrow {
+  font-family: "Inter", sans-serif;
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #fbbf24;
+  margin-bottom: 1rem;
+}
+
+.hero-content h1 {
+  font-family: "Plus Jakarta Sans", sans-serif;
+  max-width: 560px;
+  margin: 0 0 1.5rem;
+  font-size: clamp(3rem, 6vw, 5rem);
+  font-weight: 800;
+  line-height: 1.05;
+  color: white;
+  letter-spacing: -0.04em;
+}
+
+.subtitle {
+  font-family: "Inter", sans-serif;
+  font-size: 1.2rem;
+  line-height: 1.8;
+  color: rgba(255, 255, 255, 0.85);
+  max-width: 650px;
+}
+
+.trust-box {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+  padding: 20px;
+  border: 1px solid rgba(245, 213, 140, 0.22);
+  border-radius: 22px;
+  background: rgba(255, 255, 255, 0.07);
+}
+
+.shield-icon {
+  width: 38px;
+  height: 38px;
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  border-radius: 13px;
+  color: #071926;
+  background: #f5d58c;
+  font-weight: 900;
+}
+
+.trust-box strong {
+  display: block;
+  margin-bottom: 4px;
+}
+
+.trust-box p {
+  margin: 0;
+  color: rgba(237, 245, 255, 0.68);
+  line-height: 1.55;
+}
+
+.form-panel {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 48px;
+  background: rgba(4, 18, 30, 0.36);
+}
+
+.form-header {
+  margin-bottom: 30px;
+}
+
+.step-label {
+  margin: 0 0 10px;
+  color: rgba(245, 213, 140, 0.82);
+  font-size: 13px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+}
+
+.form-header h2 {
+  margin: 0;
+  font-size: clamp(34px, 4vw, 48px);
+  letter-spacing: -0.05em;
+}
+
+.form-header p {
+  margin: 12px 0 0;
+  color: rgba(237, 245, 255, 0.68);
+  line-height: 1.6;
+}
+
+.error-box {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 22px;
+  padding: 14px 16px;
+  border: 1px solid rgba(239, 68, 68, 0.22);
+  border-radius: 16px;
+  color: #fecaca;
+  background: rgba(239, 68, 68, 0.1);
+  animation: fadeUp 0.25s ease both;
+}
+
+.error-box span {
+  width: 26px;
+  height: 26px;
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  border-radius: 999px;
+  color: #071926;
+  background: #fca5a5;
+  font-size: 13px;
+  font-weight: 950;
+}
+
+.error-box p {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.login-form {
+  display: grid;
+  gap: 20px;
+}
+
+.field {
+  display: grid;
+  gap: 8px;
+}
+
+.field label {
+  color: rgba(237, 245, 255, 0.82);
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.field input {
+  width: 100%;
+  height: 58px;
+  border: 1px solid rgba(255, 255, 255, 0.13);
+  border-radius: 16px;
+  outline: none;
+  padding: 0 16px;
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.075);
+  font: inherit;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    background 0.2s ease;
+}
+
+.field input::placeholder {
+  color: rgba(237, 245, 255, 0.38);
+}
+
+.field input:focus {
+  border-color: rgba(245, 213, 140, 0.75);
+  box-shadow: 0 0 0 4px rgba(245, 213, 140, 0.12);
+  background: rgba(255, 255, 255, 0.095);
+}
+
+.password-label-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.forgot-btn {
+  border: 0;
+  padding: 0;
+  color: #f5d58c;
+  background: transparent;
+  font-size: 13px;
+  font-weight: 900;
+  cursor: pointer;
+  transition:
+    color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.forgot-btn:hover {
+  color: #ffffff;
+  transform: translateY(-1px);
+}
+
+.password-wrap {
+  position: relative;
+}
+
+.password-wrap input {
+  padding-right: 58px;
+}
+
+.password-toggle {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  width: 36px;
+  height: 36px;
+  display: grid;
+  place-items: center;
+  transform: translateY(-50%);
+  border: 0;
+  border-radius: 12px;
+  color: #f5d58c;
+  background: rgba(245, 213, 140, 0.12);
+  cursor: pointer;
+  transition:
+    color 0.2s ease,
+    background 0.2s ease,
+    transform 0.2s ease;
+}
+
+.password-toggle svg {
+  width: 20px;
+  height: 20px;
+}
+
+.password-toggle:hover {
+  color: #071926;
+  background: #f5d58c;
+  transform: translateY(-50%) scale(1.03);
+}
+
+.form-options {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.remember-row {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  color: rgba(237, 245, 255, 0.72);
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.remember-row input {
+  width: 17px;
+  height: 17px;
+  accent-color: #f5d58c;
+  cursor: pointer;
 }
 
 .submit-btn {
-    width: 100%;
-    border: none;
-    border-radius: 1rem;
-    background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
-    color: white;
-    padding: 0.9rem 1rem;
-    font-size: 0.95rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.25s ease;
-    box-shadow: 0 10px 20px rgba(37, 99, 235, 0.18);
+  height: 58px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  border: 0;
+  border-radius: 18px;
+  color: #071926;
+  background: linear-gradient(135deg, #f5d58c, #c99635);
+  font-weight: 950;
+  cursor: pointer;
+  box-shadow: 0 22px 55px rgba(201, 150, 53, 0.25);
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    opacity 0.2s ease;
 }
 
 .submit-btn:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 14px 26px rgba(37, 99, 235, 0.22);
+  transform: translateY(-2px);
+  box-shadow: 0 28px 70px rgba(201, 150, 53, 0.34);
 }
 
 .submit-btn:disabled {
-    opacity: 0.7;
-    cursor: not-allowed;
-    transform: none;
-    box-shadow: none;
+  cursor: not-allowed;
+  opacity: 0.72;
+  transform: none;
+}
+
+.spinner {
+  width: 17px;
+  height: 17px;
+  border: 2px solid rgba(7, 25, 38, 0.35);
+  border-top-color: #071926;
+  border-radius: 50%;
+  animation: spin 0.75s linear infinite;
+}
+
+.register-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 28px;
+  color: rgba(237, 245, 255, 0.62);
+  font-size: 14px;
+}
+
+.register-link button {
+  border: 0;
+  padding: 0;
+  color: #f5d58c;
+  background: transparent;
+  font: inherit;
+  font-weight: 900;
+  cursor: pointer;
+  transition:
+    color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.register-link button:hover {
+  color: #ffffff;
+  transform: translateY(-1px);
+}
+
+.copyright {
+  margin: 26px 0 0;
+  color: rgba(237, 245, 255, 0.38);
+  text-align: center;
+  font-size: 12px;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 900px) {
+  .login-card {
+    grid-template-columns: 1fr;
+  }
+
+  .brand-panel,
+  .form-panel {
+    padding: 34px;
+  }
+}
+
+@media (max-width: 620px) {
+  .login-page {
+    padding: 18px;
+  }
+
+  .login-card {
+    min-height: auto;
+    border-radius: 24px;
+  }
+
+  .brand-panel,
+  .form-panel {
+    padding: 24px;
+  }
+
+  .hero-content h1 {
+    font-size: clamp(2.5rem, 12vw, 3.5rem);
+  }
+
+  .subtitle {
+    font-size: 1rem;
+  }
+
+  .register-link {
+    flex-direction: column;
+  }
 }
 </style>
-

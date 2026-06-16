@@ -21,11 +21,11 @@
         class="!text-xl !px-8 !py-4 !bg-gradient-to-r !from-blue-600 !to-cyan-500 !border-0 !text-white hover:!scale-105 hover:!shadow-2xl transition-all duration-300"
     />
 
-    <Button
+    <Button  as="router-link" to="/auth/register"
         label="Register Your School"
         rounded
         class="!text-xl !px-8 !py-4 !bg-gradient-to-r !from-orange-500 !to-pink-600 !border-0 !text-white hover:!scale-105 hover:!shadow-2xl transition-all duration-300"
-        @click="$el && document.getElementById('pricing')?.scrollIntoView({ behavior: 'smooth' })"
+
     />
 </div>
             <div class="mt-8 flex flex-col md:flex-row gap-4 text-lg text-gray-700">
