@@ -1,18 +1,17 @@
 import axios from 'axios';
 
 const api = axios.create({
-    baseURL: 'http://127.0.0.1:8000/',
+    baseURL: 'http://127.0.0.1:9000/',
     headers: {
         'Content-Type': 'application/json',
         Accept: 'application/json'
     }
 });
 
-// ✅ LOGIN
-export const login = (payload) => api.post('api/token/', payload);
+export const registerSchool = (payload) => api.post('api/accounts/register', payload);
 
-// ✅ REGISTER
-export const register = (payload) => api.post('account/register/', payload);
+
+
 
 // ✅ CURRENT USER
 export const get_me = () =>
@@ -21,5 +20,11 @@ export const get_me = () =>
             Authorization: `Bearer ${localStorage.getItem('access')}`
         }
     });
+
+
+// ✅ LOGIN
+export const login = (payload) => api.post('api/token', payload);
+// ✅ REGISTER SCHOOL
+
 
 export default api;

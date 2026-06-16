@@ -24,6 +24,13 @@ const router = createRouter({
             component: () => import('@/views/pages/auth/Register.vue'),
             meta: { guestOnly: true }
         },
+        {
+            path: '/email-verification-sent',
+            name: 'EmailVerificationSent',
+            component: () => import('@/views/pages/auth/EmailVerificationSent.vue'),
+            meta: { guestOnly: true }
+        },
+
 
         // ✅ Protected dashboard layout
         {

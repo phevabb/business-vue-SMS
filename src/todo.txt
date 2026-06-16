@@ -5,3 +5,4 @@ protect vue endponts
 more on refresh and access token
 
 protect vue index.js routes
+change the tittle bar address from sakai vue to pss

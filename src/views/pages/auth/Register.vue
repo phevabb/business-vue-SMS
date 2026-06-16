@@ -1,6 +1,7 @@
 
 
 <template>
+     <Toast />
   <main class="register-page">
     <section class="register-card">
       <!-- LEFT BRAND PANEL -->
@@ -35,6 +36,9 @@
       <section class="form-panel">
         <div class="form-header">
           <!-- <p class="step-label">Step 1 of 3</p> -->
+
+
+
           <h2>School Registration</h2>
           <p>Tell us about your school to begin your setup.</p>
         </div>
@@ -155,6 +159,8 @@
         placeholder="Create password"
       />
 
+
+
       <button
         type="button"
         class="password-toggle"
@@ -260,7 +266,12 @@
 </template>
 
 <script setup>
+import { registerSchool } from '@/services/auth'
+import { useToast } from 'primevue/usetoast'
 import { computed, reactive, ref } from 'vue'
+import { useRouter } from 'vue-router'
+const toast = useToast()
+const router = useRouter()
 
 const loading = ref(false)
 const logoFile = ref(null)
@@ -269,6 +280,28 @@ const logoPreview = ref('')
 const showPassword = ref(false)
 const showConfirmPassword = ref(false)
 
+const form = reactive({
+  schoolName: '',
+  phoneNumber: '',
+  email: '',
+  estimatedStudents: null,
+  academicYear: '',
+  location: '',
+  fullName: '',
+  password: '',
+  confirmPassword: '',
+})
+
+const errors = reactive({
+  schoolName: '',
+  phoneNumber: '',
+  email: '',
+  estimatedStudents: '',
+  academicYear: '',
+  fullName: '',
+  password: '',
+  confirmPassword: '',
+})
 
 const passwordRules = computed(() => {
   return {
@@ -276,7 +309,7 @@ const passwordRules = computed(() => {
     uppercase: /[A-Z]/.test(form.password),
     lowercase: /[a-z]/.test(form.password),
     number: /\d/.test(form.password),
-    special: /[^A-Za-z0-9]/.test(form.password)
+    special: /[^A-Za-z0-9]/.test(form.password),
   }
 })
 
@@ -315,34 +348,21 @@ const isStrongPassword = computed(() => {
 })
 
 const passwordsMatch = computed(() => {
-  return form.password && form.confirmPassword && form.password === form.confirmPassword
+  return (
+    form.password &&
+    form.confirmPassword &&
+    form.password === form.confirmPassword
+  )
 })
 
-
-
-
-const form = reactive({
-  schoolName: '',
-  phoneNumber: '',
-  email: '',
-  estimatedStudents: null,
-  academicYear: '',
-  location: '',
-  fullName: '',
-  password: '',
-  confirmPassword: ''
-})
-
-const errors = reactive({
-  schoolName: '',
-  phoneNumber: '',
-  email: '',
-  estimatedStudents: '',
-  academicYear: '',
-  fullName: '',
-  password: '',
-  confirmPassword: ''
-})
+function showToast(severity, summary, detail) {
+  toast.add({
+    severity,
+    summary,
+    detail,
+    life: 4000,
+  })
+}
 
 function handleLogoUpload(event) {
   const file = event.target.files?.[0]
@@ -353,23 +373,37 @@ function handleLogoUpload(event) {
     'image/png',
     'image/jpeg',
     'image/webp',
-    'image/svg+xml'
+    'image/svg+xml',
   ]
 
   const maxSize = 2 * 1024 * 1024
 
   if (!allowedTypes.includes(file.type)) {
-    alert('Please upload PNG, JPG, WEBP or SVG only.')
+    showToast(
+      'error',
+      'Invalid logo',
+      'Please upload PNG, JPG, WEBP or SVG only.',
+    )
     return
   }
 
   if (file.size > maxSize) {
-    alert('Logo must not be more than 2MB.')
+    showToast(
+      'error',
+      'Logo too large',
+      'Logo must not be more than 2MB.',
+    )
     return
   }
 
   logoFile.value = file
   logoPreview.value = URL.createObjectURL(file)
+
+  showToast(
+    'success',
+    'Logo selected',
+    'School logo selected successfully.',
+  )
 }
 
 function resetErrors() {
@@ -415,12 +449,12 @@ function validateForm() {
   if (!form.email.trim()) {
     errors.email = 'Email address is required.'
     valid = false
-  } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) {
+  } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email.trim())) {
     errors.email = 'Enter a valid email address.'
     valid = false
   }
 
-  if (!form.estimatedStudents || form.estimatedStudents < 1) {
+  if (!form.estimatedStudents || Number(form.estimatedStudents) < 1) {
     errors.estimatedStudents = 'Estimated students is required.'
     valid = false
   }
@@ -428,7 +462,7 @@ function validateForm() {
   if (!form.academicYear.trim()) {
     errors.academicYear = 'Academic year is required.'
     valid = false
-  } else if (!isValidAcademicYear(form.academicYear)) {
+  } else if (!isValidAcademicYear(form.academicYear.trim())) {
     errors.academicYear = 'Use a valid academic year like 2025/2026.'
     valid = false
   }
@@ -438,49 +472,87 @@ function validateForm() {
     valid = false
   }
 
-if (!form.password) {
-  errors.password = 'Password is required.'
-  valid = false
-} else if (!isStrongPassword.value) {
-  errors.password =
-    'Password must include uppercase, lowercase, number, special character, and at least 8 characters.'
-  valid = false
-}
+  if (!form.password) {
+    errors.password = 'Password is required.'
+    valid = false
+  } else if (!isStrongPassword.value) {
+    errors.password =
+      'Password must include uppercase, lowercase, number, special character, and at least 8 characters.'
+    valid = false
+  }
 
-if (!form.confirmPassword) {
-  errors.confirmPassword = 'Please confirm your password.'
-  valid = false
-} else if (!passwordsMatch.value) {
-  errors.confirmPassword = 'Passwords do not match.'
-  valid = false
-}
+  if (!form.confirmPassword) {
+    errors.confirmPassword = 'Please confirm your password.'
+    valid = false
+  } else if (!passwordsMatch.value) {
+    errors.confirmPassword = 'Passwords do not match.'
+    valid = false
+  }
+
+  if (!valid) {
+    showToast(
+      'warn',
+      'Check form',
+      'Please correct the highlighted fields.',
+    )
+  }
 
   return valid
 }
 
 async function submitForm() {
-  if (!validateForm()) return
+  console.log('Submit clicked')
+
+  if (!validateForm()) {
+    console.log('Form validation failed:', errors)
+    return
+  }
 
   loading.value = true
 
   try {
     const payload = {
-      schoolName: form.schoolName,
-      phoneNumber: form.phoneNumber,
-      email: form.email,
-      estimatedStudents: form.estimatedStudents,
-      academicYear: form.academicYear,
-      location: form.location,
-      fullName: form.fullName,
-      password: form.password,
-      logo: logoFile.value
+      email: form.email.trim(),
+      password: form.password.trim(),
+      passwordConfirm: form.confirmPassword.trim(),
+      schoolName: form.schoolName.trim(),
+      fullName: form.fullName.trim(),
+      phoneNumber: form.phoneNumber.trim(),
+      estimatedStudents: Number(form.estimatedStudents),
+      academicYear: form.academicYear.trim(),
+      location: form.location.trim(),
+      profilePictureUrl: '',
     }
 
-    console.log('School registration payload:', payload)
+    console.log('REGISTER PAYLOAD:', payload)
 
-    await new Promise((resolve) => setTimeout(resolve, 1000))
+    const response = await registerSchool(payload)
 
-    // Move to next onboarding step here
+    console.log('REGISTER RESPONSE:', response.data)
+
+    showToast(
+      'success',
+      'Registration successful. Please verify your email.',
+      'School profile created successfully.',
+    )
+    router.push({ name: 'EmailVerificationSent' })
+  } catch (error) {
+    console.error('REGISTER ERROR:', error)
+    console.error('REGISTER ERROR DATA:', error.response?.data)
+
+    const detail =
+      error.response?.data?.message ||
+      error.response?.data?.error ||
+      error.response?.data?.detail ||
+      error.response?.data ||
+      error.message ||
+      'Registration failed. Please try again.'
+
+    showToast(
+      'error',
+      'Registration failed',
+      String(detail),
+    )
   } finally {
     loading.value = false
   }
@@ -942,6 +1014,28 @@ async function submitForm() {
   align-items: center;
   justify-content: space-between;
   gap: 12px;
+}
+
+.server-error {
+  margin: 0;
+  padding: 12px 14px;
+  border-radius: 14px;
+  color: #fecaca;
+  background: rgba(239, 68, 68, 0.13);
+  border: 1px solid rgba(239, 68, 68, 0.22);
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.server-success {
+  margin: 0;
+  padding: 12px 14px;
+  border-radius: 14px;
+  color: #86efac;
+  background: rgba(34, 197, 94, 0.12);
+  border: 1px solid rgba(34, 197, 94, 0.2);
+  font-size: 13px;
+  font-weight: 800;
 }
 
 .strength-meta small {

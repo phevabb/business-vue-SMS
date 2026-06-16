@@ -570,4 +570,4 @@ const formattedTotalPaid = computed(() => formatMoney(totalPaid.value))
     }
 }
 </style>
-``
+
