@@ -1,0 +1,9 @@
+verify gmail,
+include tel.
+take light / dark mode off
+protect vue endponts
+more on refresh and access token
+
+protect vue index.js routes
+change the tittle bar address from sakai vue to pss
+remove the sakai logo and name everywhere
