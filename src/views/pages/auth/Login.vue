@@ -26,7 +26,6 @@ const handleLogin = async () => {
     })
 
 
-    console.log('login response: print', res.data)
 
     const access = res.data?.access
     const user = res.data?.user
