@@ -528,10 +528,10 @@ function validateForm() {
 }
 
 async function submitForm() {
-  console.log('Submit clicked')
+
 
   if (!validateForm()) {
-    console.log('Form validation failed:', errors)
+
     return
   }
 
@@ -551,11 +551,10 @@ async function submitForm() {
       profilePictureUrl: '',
     }
 
-    console.log('REGISTER PAYLOAD:', payload)
+
 
     const response = await registerSchool(payload)
 
-    console.log('REGISTER RESPONSE:', response.data)
 
     showToast(
       'success',
