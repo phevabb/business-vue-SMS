@@ -65,7 +65,7 @@ const copyDomain = async () => {
             copied.value = false
         }, 1800)
     } catch (err) {
-        console.error('Failed to copy domain:', err)
+
     }
 }
 </script>

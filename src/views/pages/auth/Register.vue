@@ -563,8 +563,7 @@ async function submitForm() {
     )
     router.push({ name: 'EmailVerificationSent' })
   } catch (error) {
-    console.error('REGISTER ERROR:', error)
-    console.error('REGISTER ERROR DATA:', error.response?.data)
+
 
     const detail =
       error.response?.data?.message ||

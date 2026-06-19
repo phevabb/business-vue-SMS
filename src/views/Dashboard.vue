@@ -260,9 +260,10 @@ async function fetchDashboard() {
     const response = await getWorkspaceDashboard(tenantCode)
 
 
+
     applyDashboardData(response.data)
   } catch (err) {
-    console.error('DASHBOARD ERROR:', err)
+
 
     error.value =
       err.response?.data?.error ||

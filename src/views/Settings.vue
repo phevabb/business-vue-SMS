@@ -187,7 +187,7 @@ const loadFromStorage = () => {
     workspace.defaultDomain = user.defaultDomain || ''
     workspace.tenantStatus = user.tenantStatus || ''
   } catch (error) {
-    console.error('Failed to parse user from localStorage:', error)
+
   }
 }
 
@@ -220,7 +220,7 @@ const saveSettings = async () => {
 
     alert('Settings updated successfully.')
   } catch (error) {
-    console.error(error)
+
     alert('Unable to update settings.')
   } finally {
     loading.value = false

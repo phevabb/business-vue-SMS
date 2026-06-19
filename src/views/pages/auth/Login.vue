@@ -51,7 +51,7 @@ const handleLogin = async () => {
     // ✅ Redirect to protected dashboard
     await router.replace('/dashboard')
   } catch (err) {
-    console.error('login error: print', err)
+
 
     error.value =
       err.response?.data?.error ||
