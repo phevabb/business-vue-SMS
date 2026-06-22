@@ -7,3 +7,9 @@ more on refresh and access token
 protect vue index.js routes
 change the tittle bar address from sakai vue to pss
 remove the sakai logo and name everywhere
+
+add my whatsapp num to chat / contact me.
+
+change all links under services of src
+
+all routs must be strictly protected
