@@ -13,3 +13,21 @@ add my whatsapp num to chat / contact me.
 change all links under services of src
 
 all routs must be strictly protected
+
+
+
+.env ... secret key in subscribtion.vue
+
+
+
+
+
+
+
+
+
+
+
+for tesing:
+pk_live_851550690ca2d39b76b6fadacf0a760db6adf652
+

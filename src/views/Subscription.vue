@@ -197,10 +197,29 @@ const success = ref('')
 const invoices = ref([])
 const pollTimer = ref(null)
 
+// const paystackPublicKey = import.meta.env.VITE_PAYSTACK_PUBLIC_KEY
+// const paystackPublicKey = "pk_test_2fa7e7b672eb476a4681c757923ea7fcbdff047f"
+const paystackPublicKey = "pk_live_851550690ca2d39b76b6fadacf0a760db6adf652"
+
+
+
+
+
+
 const resolvedTenantCode = computed(() => {
   return (
     localStorage.getItem('tenantCode') ||
     localStorage.getItem('tenant_code') ||
+    ''
+  )
+})
+
+const payerEmail = computed(() => {
+  return (
+    localStorage.getItem('email') ||
+    localStorage.getItem('accountEmail') ||
+    localStorage.getItem('userEmail') ||
+    localStorage.getItem('superadmin_email') ||
     ''
   )
 })
@@ -291,7 +310,7 @@ const dueDate = computed(() => {
 })
 
 const buttonLabel = computed(() => {
-  if (paying.value) return 'Redirecting...'
+  if (paying.value) return 'Opening Paystack...'
   if (verifying.value) return 'Verifying...'
   if (!currentInvoice.value) return 'No Invoice'
   if (isPaid.value) return 'Paid'
@@ -341,6 +360,8 @@ function invoiceStatusClass(status) {
   }
 }
 
+
+
 async function fetchBilling(options = {}) {
   const { silent = false } = options
 
@@ -373,45 +394,132 @@ async function fetchBilling(options = {}) {
 }
 
 async function makePayment() {
-  const invoiceId = currentInvoice.value?.invoiceId
+  const invoice = currentInvoice.value
 
-  if (!invoiceId) {
+  if (!invoice?.invoiceId) {
     error.value = 'No invoice found for payment.'
     return
   }
 
   if (!canMakePayment.value) return
 
+//   const publicKey = import.meta.env.VITE_PAYSTACK_PUBLIC_KEY
+
+const publicKey = "pk_live_851550690ca2d39b76b6fadacf0a760db6adf652"
+
+
+
+  if (!publicKey) {
+    error.value = 'Paystack public key is missing. Add VITE_PAYSTACK_PUBLIC_KEY to your .env file.'
+    return
+  }
+
+  const email =
+    localStorage.getItem('email') ||
+    localStorage.getItem('accountEmail') ||
+    localStorage.getItem('userEmail') ||
+    ''
+
+  if (!email) {
+    error.value = 'Email address is missing. Please login again.'
+    return
+  }
+
+  const amountForPaystack = Math.round(Number(invoice.totalAmountCedis || 0) * 100)
+
+  if (amountForPaystack <= 0) {
+    error.value = 'Invoice amount must be greater than ₵0.00 before payment.'
+    return
+  }
+
   paying.value = true
   error.value = ''
   success.value = ''
 
   try {
-    const response = await initializePaystackPayment(invoiceId)
-    const authorizationUrl = response.data?.authorizationUrl
+    const initResponse = await initializePaystackPayment(invoice.invoiceId)
 
-    if (!authorizationUrl) {
-      throw new Error('Payment authorization URL was not returned.')
+    const reference =
+      initResponse.data?.reference ||
+      initResponse.data?.paystackReference ||
+      invoice.paystackReference
+
+    if (!reference) {
+      throw new Error('Payment reference was not returned.')
     }
 
-    window.location.href = authorizationUrl
+    await loadPaystackInlineScript()
+
+    if (!window.PaystackPop) {
+      throw new Error('Paystack popup could not be loaded.')
+    }
+
+    const handler = window.PaystackPop.setup({
+      key: publicKey,
+      email,
+      amount: amountForPaystack,
+      currency: 'GHS',
+      ref: reference,
+
+      callback: function (response) {
+        const verifiedReference = response?.reference || reference
+
+        verifyPaymentByReference(verifiedReference)
+      },
+
+      onClose: function () {
+        paying.value = false
+      },
+    })
+
+    handler.openIframe()
   } catch (err) {
     error.value =
       err.response?.data?.message ||
       err.response?.data?.error ||
       err.message ||
       'Unable to initialize payment.'
-  } finally {
+
     paying.value = false
   }
 }
 
-async function verifyFromCallbackIfNeeded() {
-  const reference = route.query.reference || route.query.trxref
 
+function loadPaystackInlineScript() {
+  return new Promise((resolve, reject) => {
+    if (window.PaystackPop) {
+      resolve()
+      return
+    }
+
+    const existingScript = document.querySelector(
+      'script[src="https://js.paystack.co/v1/inline.js"]'
+    )
+
+    if (existingScript) {
+      existingScript.addEventListener('load', resolve)
+      existingScript.addEventListener('error', reject)
+      return
+    }
+
+    const script = document.createElement('script')
+    script.src = 'https://js.paystack.co/v1/inline.js'
+    script.async = true
+    script.onload = resolve
+    script.onerror = reject
+
+    document.head.appendChild(script)
+  })
+}
+
+
+
+
+async function verifyPaymentByReference(reference) {
   if (!reference) return
 
   verifying.value = true
+  paying.value = false
   error.value = ''
   success.value = ''
 
@@ -425,15 +533,22 @@ async function verifyFromCallbackIfNeeded() {
     }
 
     await fetchBilling({ silent: true })
-  } catch (err) {
-    error.value =
-      err.response?.data?.message ||
-      err.response?.data?.error ||
-      err.message ||
-      'Unable to verify payment.'
   } finally {
     verifying.value = false
   }
+}
+
+async function verifyFromCallbackIfNeeded() {
+  const reference =
+    route.query.reference ||
+    route.query.trxref ||
+    localStorage.getItem('lastPaystackReference')
+
+  if (!reference) return
+
+  await verifyPaymentByReference(reference)
+
+  localStorage.removeItem('lastPaystackReference')
 }
 
 function startPolling() {
@@ -461,10 +576,6 @@ onBeforeUnmount(() => {
   stopPolling()
 })
 </script>
-
-
-
-
 
 
 

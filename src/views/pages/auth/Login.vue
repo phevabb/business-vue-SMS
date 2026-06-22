@@ -25,6 +25,7 @@ const handleLogin = async () => {
       password: password.value.trim(),
     })
 
+    console.log('Login response: res', res.data)
 
 
     const access = res.data?.access
@@ -45,6 +46,7 @@ const handleLogin = async () => {
     // ✅ Store important tenant/school values individually
     localStorage.setItem('tenantCode', user.tenantCode || '')
     localStorage.setItem('tenantSlug', user.tenantSlug || '')
+    localStorage.setItem('email', user.email || '')
     // ✅ Remember me
     localStorage.setItem('rememberMe', rememberMe.value ? 'true' : 'false')
 
