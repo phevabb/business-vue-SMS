@@ -21,7 +21,17 @@
                     <div class="col-span-12 md:col-span-3">
                         <h4 class="font-medium text-2xl leading-normal mb-4 text-surface-900 dark:text-surface-0">Company</h4>
                         <a class="leading-normal text-xl block cursor-pointer mb-2 text-surface-700 dark:text-surface-100">About Phena</a>
-                        <a class="leading-normal text-xl block cursor-pointer mb-2 text-surface-700 dark:text-surface-100">Request Demo</a>
+
+
+                       <Button
+  label="Request Demo"
+  as="a"
+  href="https://calendly.com/phevab1/30min"
+  target="_blank"
+  rel="noopener noreferrer"
+/>
+
+
                         <a class="leading-normal text-xl block cursor-pointer text-surface-700 dark:text-surface-100">Contact Us</a>
                     </div>
 

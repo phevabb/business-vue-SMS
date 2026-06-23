@@ -8,9 +8,13 @@ const routes = [
     path: '/',
     name: 'landing',
     component: () => import('@/views/pages/Landing.vue'),
+  },{
+    path: '/demo',
+    name: 'demo',
+    component: () => import('@/views/pages/DemoSection.vue'),
   },
 
-  // Public business auth pages
+  // Public business auth pagesre
   {
     path: '/auth/login',
     name: 'login',
@@ -66,6 +70,8 @@ const routes = [
     component: AppLayout,
     meta: { requiresAuth: true },
     children: [
+
+
       { path: 'settings', name: 'settings', component: () => import('@/views/Settings.vue') },
       { path: 'change-password', name: 'change-password', component: () => import('@/views/ChangePassword.vue') },
       { path: 'dashboard', name: 'dashboard', component: () => import('@/views/Dashboard.vue') },
@@ -75,6 +81,16 @@ const routes = [
       { path: 'sms', name: 'sms', component: () => import('@/views/SMS.vue') },
     ],
   },
+  {
+  path: '/auth/forgot-password',
+  name: 'forgot-password',
+  component: () => import('@/views/pages/auth/ForgotPassword.vue'),
+},
+{
+  path: '/auth/reset-password',
+  name: 'reset-password',
+  component: () => import('@/views/pages/auth/ForgotPassword.vue'),
+},
 
   // 404 - keep last
   {

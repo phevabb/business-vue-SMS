@@ -57,4 +57,18 @@ export const logout = () => {
   return api.post('/api/auth/logout')
 }
 
+
+
+export function forgotPassword(payload) {
+  return api.post('/api/auth/forgot-password', payload)
+}
+
+export function resetPassword(payload) {
+  return api.post('/api/auth/reset-password', payload)
+}
+
+export function changePassword(payload) {
+  return api.post('/api/auth/change-password', payload)
+}
+
 export default api

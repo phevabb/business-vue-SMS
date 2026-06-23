@@ -56,8 +56,18 @@ function smoothScroll(id) {
         <div class="flex border-t lg:border-t-0 border-surface py-4 lg:py-0 mt-4 lg:mt-0 gap-2">
             <Button label="Login" text as="router-link" to="/auth/login" rounded></Button>
             <Button label="Sign Up" text as="router-link" to="/auth/register" rounded></Button>
-            <Button label="Request Demo" rounded></Button>
+
+
+
+             <Button
+  label="Request Demo"
+  as="a"
+  href="https://calendly.com/phevab1/30min"
+  target="_blank"
+  rel="noopener noreferrer"
+/>
+
         </div>
     </div>
 </template>
-```
+

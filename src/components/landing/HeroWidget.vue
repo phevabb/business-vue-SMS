@@ -15,11 +15,15 @@
             </p>
 
             <div class="flex flex-col md:flex-row gap-4 mt-8">
-    <Button
-        label="Request Demo"
-        rounded
-        class="!text-xl !px-8 !py-4 !bg-gradient-to-r !from-blue-600 !to-cyan-500 !border-0 !text-white hover:!scale-105 hover:!shadow-2xl transition-all duration-300"
-    />
+   <Button
+    label="Request Demo"
+    as="a"
+    href="https://calendly.com/phevab1/30min"
+    target="_blank"
+    rel="noopener noreferrer"
+    rounded
+    class="!text-xl !px-8 !py-4 !bg-gradient-to-r !from-blue-600 !to-cyan-500 !border-0 !text-white hover:!scale-105 hover:!shadow-2xl transition-all duration-300"
+/>
 
     <Button
   as="router-link"  :to="{ name: 'register' }"

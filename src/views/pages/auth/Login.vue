@@ -130,13 +130,13 @@ const handleLogin = async () => {
             <div class="password-label-row">
               <label>Password</label>
 
-              <button
-                type="button"
-                class="forgot-btn"
-                @click="router.push('/auth/forgot-password')"
-              >
-                Forgot password?
-              </button>
+
+
+              <RouterLink type="button"  class="forgot-btn"  to="forgot-password">
+  Forgot password?
+</RouterLink>
+
+
             </div>
 
             <div class="password-wrap">

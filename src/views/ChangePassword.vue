@@ -6,32 +6,94 @@
       <h1>Change Password</h1>
       <p>Update your account password to keep your workspace secure.</p>
 
-      <form class="password-form" @submit.prevent="changePassword">
+      <div v-if="error" class="alert alert-error">
+        {{ error }}
+      </div>
+
+      <div v-if="success" class="alert alert-success">
+        {{ success }}
+      </div>
+
+      <form class="password-form" @submit.prevent="submitChangePassword">
         <div class="field">
           <label>Current Password</label>
-          <input
-            v-model="form.currentPassword"
-            type="password"
-            placeholder="Enter current password"
-          />
+
+          <div class="password-wrapper">
+            <input
+              v-model="form.currentPassword"
+              :type="showCurrentPassword ? 'text' : 'password'"
+              placeholder="Enter current password"
+              autocomplete="current-password"
+            />
+
+            <button
+              type="button"
+              class="eye-btn"
+              @click="showCurrentPassword = !showCurrentPassword"
+              :aria-label="showCurrentPassword ? 'Hide current password' : 'Show current password'"
+            >
+              <i :class="showCurrentPassword ? 'pi pi-eye-slash' : 'pi pi-eye'"></i>
+            </button>
+          </div>
         </div>
 
         <div class="field">
           <label>New Password</label>
-          <input
-            v-model="form.newPassword"
-            type="password"
-            placeholder="Enter new password"
-          />
+
+          <div class="password-wrapper">
+            <input
+              v-model="form.newPassword"
+              :type="showNewPassword ? 'text' : 'password'"
+              placeholder="Enter new password"
+              autocomplete="new-password"
+            />
+
+            <button
+              type="button"
+              class="eye-btn"
+              @click="showNewPassword = !showNewPassword"
+              :aria-label="showNewPassword ? 'Hide new password' : 'Show new password'"
+            >
+              <i :class="showNewPassword ? 'pi pi-eye-slash' : 'pi pi-eye'"></i>
+            </button>
+          </div>
         </div>
 
         <div class="field">
           <label>Confirm New Password</label>
-          <input
-            v-model="form.confirmPassword"
-            type="password"
-            placeholder="Confirm new password"
-          />
+
+          <div class="password-wrapper">
+            <input
+              v-model="form.confirmPassword"
+              :type="showConfirmPassword ? 'text' : 'password'"
+              placeholder="Confirm new password"
+              autocomplete="new-password"
+            />
+
+            <button
+              type="button"
+              class="eye-btn"
+              @click="showConfirmPassword = !showConfirmPassword"
+              :aria-label="showConfirmPassword ? 'Hide confirm password' : 'Show confirm password'"
+            >
+              <i :class="showConfirmPassword ? 'pi pi-eye-slash' : 'pi pi-eye'"></i>
+            </button>
+          </div>
+        </div>
+
+        <div class="password-rules">
+          <p>Password must contain:</p>
+
+          <ul>
+            <li :class="{ valid: passwordChecks.length }">At least 8 characters</li>
+            <li :class="{ valid: passwordChecks.uppercase }">One uppercase letter</li>
+            <li :class="{ valid: passwordChecks.lowercase }">One lowercase letter</li>
+            <li :class="{ valid: passwordChecks.number }">One number</li>
+            <li :class="{ valid: passwordChecks.special }">One special character</li>
+            <li :class="{ valid: passwordsMatch && form.confirmPassword.length > 0 }">
+              New passwords must match
+            </li>
+          </ul>
         </div>
 
         <button
@@ -47,9 +109,16 @@
 </template>
 
 <script setup>
-import { reactive, ref } from 'vue'
+import { changePassword as changePasswordApi } from '@/services/auth.js'
+import { computed, reactive, ref } from 'vue'
+
+const showCurrentPassword = ref(false)
+const showNewPassword = ref(false)
+const showConfirmPassword = ref(false)
 
 const loading = ref(false)
+const error = ref('')
+const success = ref('')
 
 const form = reactive({
   currentPassword: '',
@@ -57,30 +126,87 @@ const form = reactive({
   confirmPassword: '',
 })
 
-const changePassword = async () => {
+const passwordChecks = computed(() => {
+  const password = form.newPassword
+
+  return {
+    length: password.length >= 8,
+    uppercase: /[A-Z]/.test(password),
+    lowercase: /[a-z]/.test(password),
+    number: /[0-9]/.test(password),
+    special: /[^A-Za-z0-9]/.test(password),
+  }
+})
+
+const passwordsMatch = computed(() => {
+  return form.newPassword === form.confirmPassword
+})
+
+function validateStrongPassword(password) {
+  return (
+    password.length >= 8 &&
+    /[A-Z]/.test(password) &&
+    /[a-z]/.test(password) &&
+    /[0-9]/.test(password) &&
+    /[^A-Za-z0-9]/.test(password)
+  )
+}
+
+function resetForm() {
+  form.currentPassword = ''
+  form.newPassword = ''
+  form.confirmPassword = ''
+
+  showCurrentPassword.value = false
+  showNewPassword.value = false
+  showConfirmPassword.value = false
+}
+
+async function submitChangePassword() {
+  error.value = ''
+  success.value = ''
+
   if (!form.currentPassword || !form.newPassword || !form.confirmPassword) {
-    alert('Please complete all fields.')
+    error.value = 'Please complete all fields.'
+    return
+  }
+
+  if (!validateStrongPassword(form.newPassword)) {
+    error.value =
+      'Password must contain at least 8 characters, uppercase, lowercase, number, and special character.'
     return
   }
 
   if (form.newPassword !== form.confirmPassword) {
-    alert('New passwords do not match.')
+    error.value = 'New passwords do not match.'
+    return
+  }
+
+  if (form.currentPassword === form.newPassword) {
+    error.value = 'New password must be different from current password.'
     return
   }
 
   loading.value = true
 
   try {
-    // TODO: connect to backend endpoint later
-    await new Promise((resolve) => setTimeout(resolve, 800))
+    const response = await changePasswordApi({
+      currentPassword: form.currentPassword,
+      newPassword: form.newPassword,
+      confirmPassword: form.confirmPassword,
+    })
 
-    alert('Password updated successfully.')
+    success.value =
+      response.data?.message ||
+      'Password changed successfully.'
 
-    form.currentPassword = ''
-    form.newPassword = ''
-    form.confirmPassword = ''
-  } catch (error) {
-    alert('Unable to update password.')
+    resetForm()
+  } catch (err) {
+    error.value =
+      err.response?.data?.message ||
+      err.response?.data?.error ||
+      err.message ||
+      'Unable to update password.'
   } finally {
     loading.value = false
   }
@@ -127,6 +253,26 @@ p {
   line-height: 1.7;
 }
 
+.alert {
+  margin-top: 18px;
+  padding: 13px 14px;
+  border-radius: 16px;
+  font-weight: 800;
+  line-height: 1.45;
+}
+
+.alert-error {
+  background: #fee2e2;
+  color: #991b1b;
+  border: 1px solid #fecaca;
+}
+
+.alert-success {
+  background: #dcfce7;
+  color: #166534;
+  border: 1px solid #bbf7d0;
+}
+
 .password-form {
   display: grid;
   gap: 18px;
@@ -144,18 +290,73 @@ p {
   font-weight: 800;
 }
 
-.field input {
+.password-wrapper {
+  position: relative;
+}
+
+.password-wrapper input {
   width: 100%;
   height: 50px;
   border: 1px solid #e5e7eb;
   border-radius: 14px;
-  padding: 0 14px;
+  padding: 0 48px 0 14px;
   outline: none;
+  color: #111827;
+  font-weight: 700;
 }
 
-.field input:focus {
+.password-wrapper input:focus {
   border-color: #c99635;
   box-shadow: 0 0 0 4px rgba(201, 150, 53, 0.12);
+}
+
+.eye-btn {
+  position: absolute;
+  top: 50%;
+  right: 14px;
+  transform: translateY(-50%);
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  color: #6b7280;
+  padding: 0;
+  font-size: 1rem;
+  width: 26px;
+  height: 26px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.eye-btn:hover {
+  color: #c99635;
+}
+
+.password-rules {
+  background: #fffbeb;
+  border: 1px solid #fde68a;
+  border-radius: 16px;
+  padding: 14px;
+}
+
+.password-rules p {
+  margin: 0 0 8px;
+  color: #92400e;
+  font-size: 13px;
+  font-weight: 900;
+}
+
+.password-rules ul {
+  margin: 0;
+  padding-left: 18px;
+  color: #9ca3af;
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+.password-rules li.valid {
+  color: #059669;
+  font-weight: 900;
 }
 
 .save-btn {
