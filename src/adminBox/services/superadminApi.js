@@ -185,4 +185,10 @@ export function deleteAcademicYearCalendar(academicYearId) {
   return api.delete(`/billing/academic-years/${academicYearId}`)
 }
 
+
+
+export function updateTenantStatus(tenantCode, status) {
+    return api.patch(`/internal/${tenantCode}/status`, { status })
+}
+
 export default api

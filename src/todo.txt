@@ -40,3 +40,17 @@ http://localhost:5173/superadmin/accounts
 remove the icon tthe title bot here and ktor tenant
 
 POWERED BY PHENA SYSTEMS.... ( PUT CORRECT URL...... instead of: https://phena.systems/)
+
+
+
+routes to replace in production:
+--------------------------------
+
+1. superadminApi.js
+
+2. superadminApi1.js
+
+
+imporint students
+test payments to activate
+remove year when creating school

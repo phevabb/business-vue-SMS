@@ -209,8 +209,12 @@
 <script setup>
 import {
     getSuperAdminTenants,
-    updateSuperAdminTenantStatus,
 } from '@/adminBox/services/superadminApi.js'
+
+import {
+    updateTenantStatus,
+} from '@/adminBox/services/superadminApi1.js'
+
 
 import { computed, onMounted, reactive, ref } from 'vue'
 import { useRouter } from 'vue-router'
@@ -318,7 +322,7 @@ async function changeTenantStatus(tenant, status) {
   updatingTenantCode.value = tenantCode
 
   try {
-    await updateSuperAdminTenantStatus(tenantCode, status)
+    await updateTenantStatus(tenantCode, status)
 
     tenant.status = status
     calculateStats()
