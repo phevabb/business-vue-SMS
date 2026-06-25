@@ -31,3 +31,12 @@ my logo
 for tesing:
 pk_live_851550690ca2d39b76b6fadacf0a760db6adf652
 
+
+mine :
+http://localhost:5173/superadmin/accounts
+
+
+
+remove the icon tthe title bot here and ktor tenant
+
+POWERED BY PHENA SYSTEMS.... ( PUT CORRECT URL...... instead of: https://phena.systems/)

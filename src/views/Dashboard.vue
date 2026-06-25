@@ -17,27 +17,27 @@
         <!-- Header -->
         <section class="hero">
             <div>
-                <span class="hero-badge">Tenant Workspace</span>
+                <span class="hero-badge">Workspace</span>
                 <h1>{{ tenant.schoolName }}</h1>
                 <p>
-                    A simple overview of your workspace, subscription, billing status,
-                    messaging balance, and school access.
+                    A simple overview of your workspace.
                 </p>
             </div>
 
             <div class="hero-actions">
-                <button class="btn btn-light" @click="openSchoolSystem">Open System</button>
-                <button class="btn btn-dark" @click="makePayment">Make Payment</button>
+
+
+                <button class="btn btn-dark" @click="openSchoolSystem">Open System</button>
             </div>
         </section>
 
         <!-- Summary Cards -->
         <section class="summary-grid">
-            <div class="summary-card">
+            <!-- <div class="summary-card">
                 <span class="summary-label">Students</span>
                 <strong>{{ tenant.activeStudents }}</strong>
                 <small>{{ tenant.classCount }} classes • {{ tenant.staffCount }} staff</small>
-            </div>
+            </div> -->
 
             <div class="summary-card">
                 <span class="summary-label">Plan</span>
@@ -45,17 +45,17 @@
                 <small>{{ tenant.billingCycle }} • {{ tenant.billingStatus }}</small>
             </div>
 
-            <div class="summary-card">
+            <!-- <div class="summary-card">
                 <span class="summary-label">Next Invoice</span>
                 <strong>₵{{ nextInvoiceAmount }}</strong>
                 <small>{{ tenant.nextInvoiceDate }}</small>
-            </div>
+            </div> -->
 
-            <div class="summary-card">
+            <!-- <div class="summary-card">
                 <span class="summary-label">SMS Credits</span>
                 <strong>{{ smsCreditsLeftFormatted }}</strong>
                 <small>{{ tenant.smsCreditsUsed }} used of {{ tenant.smsCreditsTotal }}</small>
-            </div>
+            </div> -->
         </section>
 
         <!-- Main Overview -->
@@ -85,8 +85,8 @@
                         <strong>{{ tenant.principalLoginUserId }}</strong>
                     </div>
                     <div class="info-item">
-                        <span>Academic Year</span>
-                        <strong>{{ tenant.academicYear }}</strong>
+                        <span>Administrator ID</span>
+                        <strong>{{ tenant.adminLoginUserId}}</strong>
                     </div>
                     <div class="info-item">
                         <span>Principal Pin</span>
@@ -94,8 +94,8 @@
  }}</strong>
                     </div>
                     <div class="info-item">
-                        <span>Contact Email</span>
-                        <strong>{{ tenant.contactEmail }}</strong>
+                        <span>Admin PINl</span>
+                        <strong>{{ tenant.adminPin }}</strong>
                     </div>
                 </div>
             </div>
@@ -120,7 +120,7 @@
                     >
                         {{ tenant.domain }}
                     </a>
-                    <div class="domain-info">
+                    <!-- <div class="domain-info">
                         <div class="domain-row">
                             <span>Environment</span>
                             <strong>{{ tenant.environment }}</strong>
@@ -137,7 +137,7 @@
                     </a>
 
                         </div>
-                    </div>
+                    </div> -->
                 </div>
 
                 <div class="domain-actions">
@@ -162,6 +162,8 @@ const tenant = reactive({
   schoolName: '',
   schoolType: 'School',
   schoolId: '',
+  adminLoginUserId: '',
+  adminPin: '',
   principalLoginUserId: '',
   principalPin: '',
   tenantCode: '',
@@ -221,7 +223,8 @@ function applyDashboardData(data) {
   tenant.defaultLocalDomain = data.defaultLocalDomain || ''
   tenant.principalLoginUserId = data.principalLoginUserId || ''
   tenant.principalPin = data.principalPin || ''
-
+  tenant.adminLoginUserId = data.adminLoginUserId || ''
+  tenant.adminPin = data.adminPin || ''
 
   tenant.planName = data.planName || 'Standard Plan'
   tenant.billingCycle = data.billingCycle || 'Billed Per Term'
@@ -258,6 +261,7 @@ async function fetchDashboard() {
 
   try {
     const response = await getWorkspaceDashboard(tenantCode)
+    console.log("respone print is ", response)
 
 
 

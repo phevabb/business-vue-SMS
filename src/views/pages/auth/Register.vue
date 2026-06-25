@@ -41,11 +41,14 @@
 
           <h2 style="color: papayawhip;">School Registration</h2>
           <p>Tell us about your school to begin your setup.</p>
+          <small style="color: papayawhip;">
+            All schools will go through a free trial period first.
+        </small>
         </div>
 
         <form @submit.prevent="submitForm" class="school-form">
           <!-- LOGO UPLOAD -->
-          <label class="upload-box">
+          <!-- <label class="upload-box">
             <input
               type="file"
               accept="image/png,image/jpeg,image/webp,image/svg+xml"
@@ -60,7 +63,7 @@
               <strong>Upload school logo</strong>
               <small>PNG, JPG, WEBP or SVG. Max 2MB.</small>
             </div>
-          </label>
+          </label> -->
 
           <div class="field">
             <label>School Name *</label>

@@ -34,34 +34,34 @@ const model = ref([
         icon: 'pi pi-fw pi-tag',
         to: '/subscription',
       },
-      {
-        label: 'School Domain',
-        icon: 'pi pi-fw pi-globe',
-        to: '/domain',
-      },
-      {
-        label: 'SMS',
-        icon: 'pi pi-fw pi-comments',
-        to: '/sms',
-      },
-      {
-        label: 'Billing Summary',
-        icon: 'pi pi-fw pi-dollar',
-        to: '/billing',
-      },
+    //   {
+    //     label: 'School Domain',
+    //     icon: 'pi pi-fw pi-globe',
+    //     to: '/domain',
+    //   },
+    //   {
+    //     label: 'SMS',
+    //     icon: 'pi pi-fw pi-comments',
+    //     to: '/sms',
+    //   },
+    //   {
+    //     label: 'Billing Summary',
+    //     icon: 'pi pi-fw pi-dollar',
+    //     to: '/billing',
+    //   },
     ],
   },
 
-  {
-    label: 'Settings',
-    items: [
-      {
-        label: 'School Settings',
-        icon: 'pi pi-fw pi-cog',
-        to: '/settings',
-      },
-    ],
-  },
+//   {
+//     label: 'Settings',
+//     items: [
+//       {
+//         label: 'School Settings',
+//         icon: 'pi pi-fw pi-cog',
+//         to: '/settings',
+//       },
+//     ],
+//   },
 
   {
     label: 'Account',

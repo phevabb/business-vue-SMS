@@ -4,10 +4,14 @@
         class="flex flex-col pt-6 px-6 lg:px-20 overflow-hidden"
         style="background: linear-gradient(0deg, rgba(255, 255, 255, 0.18), rgba(255, 255, 255, 0.18)), radial-gradient(77.36% 256.97% at 77.36% 57.52%, rgb(223, 244, 255) 0%, rgb(227, 236, 255) 100%); clip-path: ellipse(150% 87% at 93% 13%)"
     >
+
+    <div style="padding-top: 60px;">
+
+    </div>
         <div class="mx-6 md:mx-20 mt-0 md:mt-6">
             <h1 class="text-5xl md:text-6xl font-bold text-gray-900 leading-tight">
                 <span class="font-light block">Smarter school operations</span>
-                with Phena SMS
+                with Phena School Management System
             </h1>
 
             <p class="font-normal text-xl md:text-2xl leading-normal md:mt-4 text-gray-700 max-w-4xl">
