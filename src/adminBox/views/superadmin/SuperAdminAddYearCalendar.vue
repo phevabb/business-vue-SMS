@@ -508,7 +508,7 @@ async function submitCalendar() {
 
     if (editingYearId.value) {
       const t = await updateAcademicYearCalendar(editingYearId.value, payload)
-      console.log('Update response: print', t)
+
       success.value = 'Academic year updated successfully.'
     } else {
       await createAcademicYearCalendar(payload)
@@ -518,7 +518,7 @@ async function submitCalendar() {
     await fetchAcademicYears()
     resetForm()
   } catch (err) {
-    console.log("error is print", err)
+
     error.value =
       err.response?.data?.message ||
       err.response?.data?.error ||

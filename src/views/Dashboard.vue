@@ -261,7 +261,7 @@ async function fetchDashboard() {
 
   try {
     const response = await getWorkspaceDashboard(tenantCode)
-    console.log("respone print is ", response)
+
 
 
 

@@ -25,7 +25,7 @@ const handleLogin = async () => {
       password: password.value.trim(),
     })
 
-    console.log('Login response: res', res.data)
+
 
 
     const access = res.data?.access

@@ -1,11 +1,20 @@
-verify gmail,
-include tel.
+to deploy (search: https://kogschool.com/business )
+---------
+convet in:
+auth.js
+superadminApi
+superadminApi1
+billingApi
+
+
+verify gmail    DONE
+include tel     DONE
 take light / dark mode off
 protect vue endponts
-more on refresh and access token
+
 
 protect vue index.js routes
-change the tittle bar address from sakai vue to pss
+change the tittle bar address from sakai vue to pss DONE
 remove the sakai logo and name everywhere
 
 add my whatsapp num to chat / contact me.

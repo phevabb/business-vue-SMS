@@ -293,7 +293,7 @@ async function fetchTenants() {
 
   try {
     const response = await getSuperAdminTenants()
-    console.log('Fetched tenants:print', response.data)
+
 
     tenants.value = Array.isArray(response.data) ? response.data : []
 

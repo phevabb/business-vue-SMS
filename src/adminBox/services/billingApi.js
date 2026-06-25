@@ -1,7 +1,9 @@
 import axios from 'axios'
 
 const api = axios.create({
-  baseURL: 'http://127.0.0.1:9000',
+//   baseURL: 'http://127.0.0.1:9000', // local development
+
+     baseURL: 'https://kogschool.com/business', // production
 
   headers: {
     Accept: 'application/json',
