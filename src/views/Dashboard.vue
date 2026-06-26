@@ -123,7 +123,7 @@
 
 
 <!-- comment local url starts here -->
-                    <div class="domain-info">
+                    <!-- <div class="domain-info">
                         <div class="domain-row">
                             <span>Environment</span>
                             <strong>{{ tenant.environment }}</strong>
@@ -140,7 +140,7 @@
                     </a>
 
                         </div>
-                    </div>
+                    </div> -->
                     <!-- comment local url ends here -->
 
 
