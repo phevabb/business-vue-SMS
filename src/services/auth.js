@@ -3,7 +3,7 @@ import axios from 'axios'
 const api = axios.create({
 
 
-     baseURL: 'https://kogschool.com/business', // production
+     baseURL: 'https://api.phenaschool.com', // production
 
 //    baseURL: 'http://127.0.0.1:9000', // local development
   headers: {

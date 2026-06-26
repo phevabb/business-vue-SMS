@@ -299,7 +299,7 @@ async function fetchTenants() {
 
     calculateStats()
   } catch (err) {
-    console.error('Error fetching tenants:print', err)
+
     error.value =
       err.response?.data?.error ||
       err.response?.data?.message ||

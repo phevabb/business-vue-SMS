@@ -1,4 +1,4 @@
-to deploy (search: https://kogschool.com/business )
+to deploy (search: https://api.phenaschool.com)
 ---------
 convet in:
 auth.js
