@@ -120,6 +120,9 @@
                     >
                         {{ tenant.domain }}
                     </a>
+
+
+<!-- comment local url starts here -->
                     <div class="domain-info">
                         <div class="domain-row">
                             <span>Environment</span>
@@ -138,6 +141,10 @@
 
                         </div>
                     </div>
+                    <!-- comment local url ends here -->
+
+
+
                 </div>
 
                 <div class="domain-actions">

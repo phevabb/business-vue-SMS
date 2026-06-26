@@ -5,6 +5,7 @@ auth.js
 superadminApi
 superadminApi1
 billingApi
+comment the local url @ search live url
 
 
 verify gmail    DONE
