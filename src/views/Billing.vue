@@ -11,7 +11,7 @@ import { useRoute } from 'vue-router'
 const props = defineProps({
   planName: {
     type: String,
-    default: 'Growth Plan',
+    default: 'Standard Plan',
   },
   billingCycle: {
     type: String,

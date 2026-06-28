@@ -78,23 +78,23 @@ export function superAdminLogout() {
  */
 
 export function getSuperAdminAccounts(params = {}) {
-  return api.get('/api/superadmin/accounts', {
+  return api.get('/api/super', {
     params,
   })
 }
 
 export function getSuperAdminAccountById(accountId) {
-  return api.get(`/api/superadmin/accounts/${accountId}`)
+  return api.get(`/api/super/${accountId}`)
 }
 
 export function updateSuperAdminAccountActive(accountId, isActive) {
-  return api.patch(`/api/superadmin/accounts/${accountId}/active`, {
+  return api.patch(`/api/super/accounts/${accountId}/active`, {
     isActive,
   })
 }
 
 export function updateSuperAdminAccountStatus(accountId, payload) {
-  return api.patch(`/api/superadmin/accounts/${accountId}/status`, payload)
+  return api.patch(`/api/super/accounts/${accountId}/status`, payload)
 }
 
 /**

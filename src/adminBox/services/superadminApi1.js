@@ -60,7 +60,7 @@ api.interceptors.response.use(
 
 
 export function updateTenantStatus(tenantCode, status) {
-    return api.patch(`/api/superadmin/tenants/${tenantCode}/status`, { status })
+    return api.patch(`/api//internal/super/tenant/${tenantCode}/status`, { status })
 }
 
 export default api

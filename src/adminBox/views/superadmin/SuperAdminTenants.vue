@@ -286,7 +286,7 @@ async function fetchTenants() {
 
   try {
     const response = await getSuperAdminTenants()
-    console.log("response is print: ", response)
+
 
 
     tenants.value = Array.isArray(response.data) ? response.data : []
@@ -317,12 +317,11 @@ async function changeTenantStatus(tenant, status) {
 
   try {
    const res =  await updateTenantStatus(tenantCode, status)
-   console.log('Tenant status updated response print', res.data)
 
     tenant.status = status
     calculateStats()
   } catch (err) {
-    console.log('Error updating tenant status: print', err)
+
     tenant.status = oldStatus
 
     alert(
