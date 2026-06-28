@@ -59,11 +59,11 @@ api.interceptors.response.use(
  */
 
 export function superAdminLogin(payload) {
-  return api.post('/api/superadmin/login', payload)
+  return api.post('superadmin/login', payload)
 }
 
 export function getSuperAdminMe() {
-  return api.get('/api/superadmin/me')
+  return api.get('superadmin/me')
 }
 
 export function superAdminLogout() {
@@ -86,17 +86,17 @@ export function getSuperAdminAccounts(params = {}) {
 }
 
 export function getSuperAdminAccountById(accountId) {
-  return api.get(`/api/superadmin/accounts/${accountId}`)
+  return api.get(`superadmin/accounts/${accountId}`)
 }
 
 export function updateSuperAdminAccountActive(accountId, isActive) {
-  return api.patch(`/api/superadmin/accounts/${accountId}/active`, {
+  return api.patch(`superadmin/accounts/${accountId}/active`, {
     isActive,
   })
 }
 
 export function updateSuperAdminAccountStatus(accountId, payload) {
-  return api.patch(`/api/superadmin/accounts/${accountId}/status`, payload)
+  return api.patch(`superadmin/accounts/${accountId}/status`, payload)
 }
 
 /**
@@ -109,17 +109,17 @@ export function updateSuperAdminAccountStatus(accountId, payload) {
 
 
 export function getSuperAdminTenants(params = {}) {
-  return api.get('/internal/super/tenant ', {
+  return api.get('internal/super/tenant ', {
     params,
   })
 }
 
 export function getSuperAdminTenantByCode(tenantCode) {
-  return api.get(`/api/superadmin/tenants/${tenantCode}`)
+  return api.get(`superadmin/tenants/${tenantCode}`)
 }
 
 export function updateSuperAdminTenantStatus(tenantCode, status) {
-  return api.patch(`/api/superadmin/tenants/${tenantCode}/status`, {
+  return api.patch(`superadmin/tenants/${tenantCode}/status`, {
     status,
   })
 }
@@ -132,13 +132,13 @@ export function updateSuperAdminTenantStatus(tenantCode, status) {
  */
 
 export function getSuperAdminTransactions(params = {}) {
-  return api.get('/api/superadmin/account-transactions', {
+  return api.get('superadmin/account-transactions', {
     params,
   })
 }
 
 export function getSuperAdminTransactionsByTenant(tenantCode) {
-  return api.get('/api/superadmin/account-transactions', {
+  return api.get('superadmin/account-transactions', {
     params: {
       tenantCode,
     },
