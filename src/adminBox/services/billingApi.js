@@ -1,9 +1,8 @@
 import axios from 'axios'
 
 const api = axios.create({
-//   baseURL: 'http://127.0.0.1:9000', // local development
 
-     baseURL: 'https://api.phenaschool.com', // production
+     baseURL: import.meta.env.VITE_API_BASE_URL,
 
   headers: {
     Accept: 'application/json',

@@ -1,9 +1,7 @@
 import axios from 'axios'
 
 const api = axios.create({
-//  baseURL: 'http://127.0.0.1:9001/api/', // local
-
-        baseURL: 'https://api.phenaschool.com/api/', // production
+ baseURL: import.meta.env.VITE_API_BASE_URL,
   headers: {
     Accept: 'application/json',
     'Content-Type': 'application/json',
@@ -62,7 +60,7 @@ api.interceptors.response.use(
 
 
 export function updateTenantStatus(tenantCode, status) {
-    return api.patch(`/internal/${tenantCode}/status`, { status })
+    return api.patch(`/api/superadmin/tenants/${tenantCode}/status`, { status })
 }
 
 export default api

@@ -6,7 +6,7 @@
         <span class="page-badge">ktor-business → ktor-tenant</span>
         <h1 style="color: bisque;">Tenants Management</h1>
         <p>
-          View and manage tenant records, schema names, domains, provisioning
+          View and manage tenant records, schema names, domains,
           state, and operational status across all schools.
         </p>
       </div>
@@ -39,7 +39,7 @@
         <div class="summary-card">
           <span>Active</span>
           <strong>{{ stats.active }}</strong>
-          <small>{{ stats.inactive }} inactive tenants</small>
+
         </div>
 
         <div class="summary-card">
@@ -48,11 +48,7 @@
           <small>Tenants currently blocked</small>
         </div>
 
-        <div class="summary-card">
-          <span>Failed / Provisioning</span>
-          <strong>{{ stats.failed + stats.provisioning }}</strong>
-          <small>{{ stats.failed }} failed • {{ stats.provisioning }} provisioning</small>
-        </div>
+
       </section>
 
       <!-- Toolbar -->
@@ -67,10 +63,9 @@
         <select v-model="statusFilter" class="filter-select">
           <option value="all">All statuses</option>
           <option value="active">Active only</option>
-          <option value="inactive">Inactive only</option>
+
           <option value="suspended">Suspended only</option>
-          <option value="provisioning">Provisioning only</option>
-          <option value="failed">Failed only</option>
+
         </select>
       </section>
 
@@ -158,11 +153,11 @@
                     :disabled="updatingTenantCode === tenant.tenantCode"
                     @change="changeTenantStatus(tenant, $event.target.value)"
                   >
-                    <option value="provisioning">provisioning</option>
+
                     <option value="active">active</option>
-                    <option value="inactive">inactive</option>
+
                     <option value="suspended">suspended</option>
-                    <option value="failed">failed</option>
+
                   </select>
                 </td>
 
@@ -232,10 +227,9 @@ const tenants = ref([])
 const stats = reactive({
   total: 0,
   active: 0,
-  inactive: 0,
+
   suspended: 0,
-  provisioning: 0,
-  failed: 0,
+
 })
 
 const normalizedSearch = computed(() => search.value.trim().toLowerCase())
@@ -281,10 +275,9 @@ function calculateStats() {
   stats.total = tenants.value.length
 
   stats.active = tenants.value.filter((tenant) => tenant.status === 'active').length
-  stats.inactive = tenants.value.filter((tenant) => tenant.status === 'inactive').length
+
   stats.suspended = tenants.value.filter((tenant) => tenant.status === 'suspended').length
-  stats.provisioning = tenants.value.filter((tenant) => tenant.status === 'provisioning').length
-  stats.failed = tenants.value.filter((tenant) => tenant.status === 'failed').length
+
 }
 
 async function fetchTenants() {
@@ -293,6 +286,7 @@ async function fetchTenants() {
 
   try {
     const response = await getSuperAdminTenants()
+    console.log("response is print: ", response)
 
 
     tenants.value = Array.isArray(response.data) ? response.data : []
@@ -322,11 +316,13 @@ async function changeTenantStatus(tenant, status) {
   updatingTenantCode.value = tenantCode
 
   try {
-    await updateTenantStatus(tenantCode, status)
+   const res =  await updateTenantStatus(tenantCode, status)
+   console.log('Tenant status updated response print', res.data)
 
     tenant.status = status
     calculateStats()
   } catch (err) {
+    console.log('Error updating tenant status: print', err)
     tenant.status = oldStatus
 
     alert(
@@ -344,10 +340,9 @@ function tenantStatusClass(status) {
   const value = String(status || '').toLowerCase()
 
   if (value === 'active') return 'success'
-  if (value === 'inactive') return 'muted'
+
   if (value === 'suspended') return 'danger'
-  if (value === 'failed') return 'danger'
-  if (value === 'provisioning') return 'warning'
+
 
   return 'muted'
 }

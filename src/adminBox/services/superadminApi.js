@@ -1,9 +1,7 @@
 import axios from 'axios'
 
 const api = axios.create({
-//   baseURL: 'http://127.0.0.1:9000/api/', // local
-
-   baseURL: 'https://api.phenaschool.com/api/', // production
+ baseURL: import.meta.env.VITE_API_BASE_URL,
 
 
   headers: {
@@ -59,11 +57,11 @@ api.interceptors.response.use(
  */
 
 export function superAdminLogin(payload) {
-  return api.post('superadmin/login', payload)
+  return api.post('/api/superadmin/login', payload)
 }
 
 export function getSuperAdminMe() {
-  return api.get('superadmin/me')
+  return api.get('/api/superadmin/me')
 }
 
 export function superAdminLogout() {
@@ -80,23 +78,23 @@ export function superAdminLogout() {
  */
 
 export function getSuperAdminAccounts(params = {}) {
-  return api.get('super', {
+  return api.get('/api/superadmin/accounts', {
     params,
   })
 }
 
 export function getSuperAdminAccountById(accountId) {
-  return api.get(`superadmin/accounts/${accountId}`)
+  return api.get(`/api/superadmin/accounts/${accountId}`)
 }
 
 export function updateSuperAdminAccountActive(accountId, isActive) {
-  return api.patch(`superadmin/accounts/${accountId}/active`, {
+  return api.patch(`/api/superadmin/accounts/${accountId}/active`, {
     isActive,
   })
 }
 
 export function updateSuperAdminAccountStatus(accountId, payload) {
-  return api.patch(`superadmin/accounts/${accountId}/status`, payload)
+  return api.patch(`/api/superadmin/accounts/${accountId}/status`, payload)
 }
 
 /**
@@ -109,17 +107,17 @@ export function updateSuperAdminAccountStatus(accountId, payload) {
 
 
 export function getSuperAdminTenants(params = {}) {
-  return api.get('internal/super/tenant ', {
+  return api.get('/api/internal/super/tenant ', {
     params,
   })
 }
 
 export function getSuperAdminTenantByCode(tenantCode) {
-  return api.get(`superadmin/tenants/${tenantCode}`)
+  return api.get(`/api/superadmin/tenants/${tenantCode}`)
 }
 
 export function updateSuperAdminTenantStatus(tenantCode, status) {
-  return api.patch(`superadmin/tenants/${tenantCode}/status`, {
+  return api.patch(`/api/internal/super/tenant/${tenantCode}/status`, {
     status,
   })
 }
@@ -132,13 +130,13 @@ export function updateSuperAdminTenantStatus(tenantCode, status) {
  */
 
 export function getSuperAdminTransactions(params = {}) {
-  return api.get('superadmin/account-transactions', {
+  return api.get('/api/superadmin/account-transactions', {
     params,
   })
 }
 
 export function getSuperAdminTransactionsByTenant(tenantCode) {
-  return api.get('superadmin/account-transactions', {
+  return api.get('/api/superadmin/account-transactions', {
     params: {
       tenantCode,
     },
@@ -152,11 +150,11 @@ export function getSuperAdminTransactionsByTenant(tenantCode) {
  */
 
 export function getSuperAdminProvisioningIssues() {
-  return api.get('/superadmin/provisioning/issues')
+  return api.get('/api/superadmin/provisioning/issues')
 }
 
 export function retryTenantProvisioning(accountId) {
-  return api.post(`/superadmin/accounts/${accountId}/retry-provisioning`)
+  return api.post(`/api/superadmin/accounts/${accountId}/retry-provisioning`)
 }
 
 /**
@@ -166,33 +164,33 @@ export function retryTenantProvisioning(accountId) {
  */
 
 export function getSuperAdminAuditLogs(params = {}) {
-  return api.get('/superadmin/audit-logs', {
+  return api.get('/api/superadmin/audit-logs', {
     params,
   })
 }
 
 export function createAcademicYearCalendar(payload) {
-  return api.post('/billing/academic-years', payload)
+  return api.post('/api/billing/academic-years', payload)
 }
 
 export function getAcademicYearCalendars(params = {}) {
-  return api.get('/superadmin/billing/academic-years', {
+  return api.get('/api/superadmin/billing/academic-years', {
     params,
   })
 }
 
 export function updateAcademicYearCalendar(academicYearId, payload) {
-  return api.patch(`/billing/academic-years/${academicYearId}`, payload)
+  return api.patch(`/api/billing/academic-years/${academicYearId}`, payload)
 }
 
 export function deleteAcademicYearCalendar(academicYearId) {
-  return api.delete(`/billing/academic-years/${academicYearId}`)
+  return api.delete(`/api/billing/academic-years/${academicYearId}`)
 }
 
 
 
 export function updateTenantStatus(tenantCode, status) {
-    return api.patch(`/internal/${tenantCode}/status`, { status })
+    return api.patch(`/api/internal/super/tenant/${tenantCode}/status`, { status })
 }
 
 export default api

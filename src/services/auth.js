@@ -3,9 +3,7 @@ import axios from 'axios'
 const api = axios.create({
 
 
-     baseURL: 'https://api.phenaschool.com', // production
-
-//    baseURL: 'http://127.0.0.1:9000', // local
+    baseURL: import.meta.env.VITE_API_BASE_URL, // local
   headers: {
     'Content-Type': 'application/json',
     Accept: 'application/json',
