@@ -142,11 +142,13 @@
                             Tailored implementation, training, and deployment
                         </span>
 
-                        <Button
-                            label="Talk to Sales"
-                            outlined
-                            class="p-button-rounded font-light leading-tight"
-                        />
+                       <Button
+    label="Talk to Sales"
+    outlined
+    class="p-button-rounded font-light leading-tight"
+    as="a"
+    href="mailto:support@phenaschool.com?subject=Sales%20Inquiry"
+/>
                     </div>
 
                     <Divider class="w-full"></Divider>
@@ -164,10 +166,10 @@
 
         </div>
 
-        <!-- FOOTNOTE -->
+        <!-- FOOTNOTE
         <div class="text-center mt-10 text-lg">
             Need a per-term or annual billing model instead? We can customise that too.
-        </div>
+        </div> -->
 
     </div>
 </template>

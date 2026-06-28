@@ -1,10 +1,11 @@
 to deploy (search: https://api.phenaschool.com)
 ---------
 convet in:
-auth.js
-superadminApi
-superadminApi1
-billingApi
+
+auth.js         `   src/sercies
+superadminApi       src/adminbox/services
+superadminApi1      src/adminbox/services
+billingApi in       src/adminbox/services
 comment the local url @ search live url
 
 
@@ -64,3 +65,4 @@ routes to replace in production:
 imporint students
 test payments to activate
 remove year when creating school
+students profile must show kids id and pin (to help send to parents)
