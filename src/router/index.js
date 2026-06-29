@@ -113,18 +113,19 @@ const isSuperAdminAuthenticated = () => !!localStorage.getItem('superadmin_token
 
 // Global route guard
 router.beforeEach((to, from, next) => {
-  const requiresAuth = to.matched.some((r) => r.meta.requiresAuth)
-  const requiresSuperAdminAuth = to.matched.some((r) => r.meta.requiresSuperAdminAuth)
-  const guestOnly = to.matched.some((r) => r.meta.guestOnly)
-  const superAdminGuestOnly = to.matched.some((r) => r.meta.superAdminGuestOnly)
+  const token = localStorage.getItem('superadmin_token')
 
-  const loggedIn = isAuthenticated()
-  const superAdminLoggedIn = isSuperAdminAuthenticated()
+  // ✅ Allow login page ALWAYS
+  if (to.path === '/superadmin/login') {
+    return next()
+  }
 
-  if (requiresSuperAdminAuth && !superAdminLoggedIn) return next('/superadmin/login')
-  if (superAdminGuestOnly && superAdminLoggedIn) return next('/superadmin/dashboard')
-  if (requiresAuth && !loggedIn) return next('/auth/login')
-  if (guestOnly && loggedIn) return next('/dashboard')
+  // ✅ Protect superadmin routes
+  if (to.path.startsWith('/superadmin')) {
+    if (!token) {
+      return next('/superadmin/login')
+    }
+  }
 
   next()
 })

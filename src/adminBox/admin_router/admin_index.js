@@ -118,25 +118,20 @@ const isSuperAdminAuthenticated = () => {
  * ✅ Global route guard for SuperAdmin
  */
 router.beforeEach((to, from, next) => {
-  const requiresSuperAdminAuth = to.matched.some(
-    (record) => record.meta.requiresSuperAdminAuth
-  )
+  const token = localStorage.getItem('superadmin_token')
 
-  const guestOnly = to.matched.some((record) => record.meta.guestOnly)
-
-  const loggedIn = isSuperAdminAuthenticated()
-
-  // ✅ If route requires superadmin auth and user is not logged in
-  if (requiresSuperAdminAuth && !loggedIn) {
-    return next('/superadmin/login')
+  // ✅ Allow login page ALWAYS
+  if (to.path === '/superadmin/login') {
+    return next()
   }
 
-  // ✅ If route is only for guests but superadmin is already logged in
-  if (guestOnly && loggedIn) {
-    return next('/superadmin/dashboard')
+  // ✅ Protect superadmin routes
+  if (to.path.startsWith('/superadmin')) {
+    if (!token) {
+      return next('/superadmin/login')
+    }
   }
 
   next()
 })
-
 export default router

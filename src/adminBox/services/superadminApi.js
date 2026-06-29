@@ -57,11 +57,11 @@ api.interceptors.response.use(
  */
 
 export function superAdminLogin(payload) {
-  return api.post('/api/superadmin/login', payload)
+  return api.post('api/super/auth/login', payload)
 }
 
 export function getSuperAdminMe() {
-  return api.get('/api/superadmin/me')
+  return api.get('api/superadmin/me')
 }
 
 export function superAdminLogout() {
