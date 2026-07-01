@@ -8,6 +8,9 @@ import {
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
 
+import { useRouter } from 'vue-router'
+const router = useRouter()
+
 const props = defineProps({
   planName: {
     type: String,
@@ -171,7 +174,7 @@ async function fetchInvoices(options = {}) {
   const { silent = false } = options
 
   if (!tenantCode.value) {
-    error.value = 'Tenant code not found. Please login again.'
+    router.replace('/auth/login')
     return
   }
 
@@ -197,7 +200,6 @@ async function fetchInvoices(options = {}) {
     loading.value = false
   }
 }
-
 async function makePayment() {
   const invoiceId = nextPayableInvoice.value?.invoiceId
 

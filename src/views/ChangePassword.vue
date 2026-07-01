@@ -108,9 +108,15 @@
   </div>
 </template>
 
+
+
+
 <script setup>
 import { changePassword as changePasswordApi } from '@/services/auth.js'
-import { computed, reactive, ref } from 'vue'
+import { computed, onMounted, reactive, ref } from 'vue'
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
 
 const showCurrentPassword = ref(false)
 const showNewPassword = ref(false)
@@ -142,6 +148,31 @@ const passwordsMatch = computed(() => {
   return form.newPassword === form.confirmPassword
 })
 
+function isValidSession() {
+  const access =
+    localStorage.getItem('access') ||
+    localStorage.getItem('token')
+
+  const tenantCode =
+    localStorage.getItem('tenantCode') ||
+    localStorage.getItem('tenant_code')
+
+  return Boolean(access && tenantCode)
+}
+
+function redirectToLogin() {
+  localStorage.removeItem('access')
+  localStorage.removeItem('token')
+  localStorage.removeItem('tenantCode')
+  localStorage.removeItem('tenant_code')
+  localStorage.removeItem('user')
+  localStorage.removeItem('rememberMe')
+  localStorage.removeItem('tenantSlug')
+  localStorage.removeItem('schoolName')
+
+  router.replace('/auth/login')
+}
+
 function validateStrongPassword(password) {
   return (
     password.length >= 8 &&
@@ -165,6 +196,11 @@ function resetForm() {
 async function submitChangePassword() {
   error.value = ''
   success.value = ''
+
+  if (!isValidSession()) {
+    redirectToLogin()
+    return
+  }
 
   if (!form.currentPassword || !form.newPassword || !form.confirmPassword) {
     error.value = 'Please complete all fields.'
@@ -202,6 +238,13 @@ async function submitChangePassword() {
 
     resetForm()
   } catch (err) {
+    const status = err.response?.status
+
+    if (status === 401 || status === 403) {
+      redirectToLogin()
+      return
+    }
+
     error.value =
       err.response?.data?.message ||
       err.response?.data?.error ||
@@ -211,7 +254,14 @@ async function submitChangePassword() {
     loading.value = false
   }
 }
+
+onMounted(() => {
+  if (!isValidSession()) {
+    redirectToLogin()
+  }
+})
 </script>
+
 
 <style scoped>
 .password-page {

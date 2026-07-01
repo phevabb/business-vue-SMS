@@ -1,172 +1,249 @@
-
-
 <template>
     <div class="workspace-page">
         <div v-if="loading" class="dashboard-state">
-  Loading workspace...
-</div>
+            Loading workspace...
+        </div>
 
-<div v-else-if="error" class="dashboard-state dashboard-error">
-  {{ error }}
-</div>
+        <div v-else-if="error" class="dashboard-state dashboard-error">
+            {{ error }}
+        </div>
 
-<template v-else>
-  <!-- your current dashboard content goes here -->
+        <template v-else>
+            <!-- Header -->
+            <section class="hero">
+                <div class="hero-content">
+                    <span class="hero-badge">
+                        Workspace
+                    </span>
 
+                    <h1>{{ tenant.schoolName }}</h1>
 
-        <!-- Header -->
-        <section class="hero">
-            <div>
-                <span class="hero-badge">Workspace</span>
-                <h1>{{ tenant.schoolName }}</h1>
-                <p>
-                    A simple overview of your workspace.
-                </p>
-            </div>
-
-            <div class="hero-actions">
-
-
-                <button class="btn btn-dark" @click="openSchoolSystem">Open System</button>
-            </div>
-        </section>
-
-        <!-- Summary Cards -->
-        <section class="summary-grid">
-            <!-- <div class="summary-card">
-                <span class="summary-label">Students</span>
-                <strong>{{ tenant.activeStudents }}</strong>
-                <small>{{ tenant.classCount }} classes • {{ tenant.staffCount }} staff</small>
-            </div> -->
-
-            <div class="summary-card">
-                <span class="summary-label">Plan</span>
-                <strong>{{ tenant.planName }}</strong>
-                <small>{{ tenant.billingCycle }} • {{ tenant.billingStatus }}</small>
-            </div>
-
-            <!-- <div class="summary-card">
-                <span class="summary-label">Next Invoice</span>
-                <strong>₵{{ nextInvoiceAmount }}</strong>
-                <small>{{ tenant.nextInvoiceDate }}</small>
-            </div> -->
-
-            <!-- <div class="summary-card">
-                <span class="summary-label">SMS Credits</span>
-                <strong>{{ smsCreditsLeftFormatted }}</strong>
-                <small>{{ tenant.smsCreditsUsed }} used of {{ tenant.smsCreditsTotal }}</small>
-            </div> -->
-        </section>
-
-        <!-- Main Overview -->
-        <section class="main-grid">
-            <!-- Overview -->
-            <div class="card overview-card">
-                <div class="card-header">
-                    <div>
-                        <h2>Workspace Overview</h2>
-                        <p>Core school and account information.</p>
-                    </div>
-                    <span class="pill pill-blue">{{ tenant.billingStatus }}</span>
+                    <p>
+                        A premium overview of your school workspace, access credentials,
+                        and live system details.
+                    </p>
                 </div>
 
-                <div class="school-box">
-                    <div class="school-logo">{{ schoolInitials }}</div>
-                    <div>
-                        <div class="school-name">{{ tenant.schoolName }}</div>
-                        <div class="school-meta">{{ tenant.schoolType }}</div>
-                        <div class="school-meta">{{ tenant.location }}</div>
+                <div class="hero-actions">
+                    <button class="btn btn-dark" @click="openSchoolSystem">
+                        Open System
+                    </button>
+                </div>
+            </section>
+
+            <!-- Summary Cards -->
+            <section class="summary-grid">
+                <!--
+                <div class="summary-card">
+                    <span class="summary-label">Students</span>
+                    <strong>{{ tenant.activeStudents }}</strong>
+                    <small>{{ tenant.classCount }} classes • {{ tenant.staffCount }} staff</small>
+                </div>
+                -->
+
+                <div class="summary-card premium-summary-card">
+                    <div class="summary-icon">
+                        ✦
                     </div>
+
+                    <span class="summary-label">
+                        Current Plan
+                    </span>
+
+                    <strong>{{ tenant.planName }}</strong>
+
+                    <small>
+                        {{ tenant.billingCycle }} • {{ tenant.billingStatus }}
+                    </small>
                 </div>
 
-                <div class="info-grid">
-                    <div class="info-item">
-                        <span>Principal ID</span>
-                        <strong>{{ tenant.principalLoginUserId }}</strong>
-                    </div>
-                    <div class="info-item">
-                        <span>Administrator ID</span>
-                        <strong>{{ tenant.adminLoginUserId}}</strong>
-                    </div>
-                    <div class="info-item">
-                        <span>Principal Pin</span>
-                        <strong>{{ tenant.principalPin
- }}</strong>
-                    </div>
-                    <div class="info-item">
-                        <span>Admin PINl</span>
-                        <strong>{{ tenant.adminPin }}</strong>
-                    </div>
+                <!--
+                <div class="summary-card">
+                    <span class="summary-label">Next Invoice</span>
+                    <strong>₵{{ nextInvoiceAmount }}</strong>
+                    <small>{{ tenant.nextInvoiceDate }}</small>
                 </div>
-            </div>
+                -->
 
-            <!-- Minimal Premium Domain -->
-            <div class="card domain-card">
-                <div class="card-header">
-                    <div>
-                        <h2>School Domain</h2>
-                        <p>Live access details.</p>
-                    </div>
-                    <span class="pill pill-green">{{ tenant.sslStatus }}</span>
+                <!--
+                <div class="summary-card">
+                    <span class="summary-label">SMS Credits</span>
+                    <strong>{{ smsCreditsLeftFormatted }}</strong>
+                    <small>{{ tenant.smsCreditsUsed }} used of {{ tenant.smsCreditsTotal }}</small>
                 </div>
+                -->
+            </section>
 
-                <div class="domain-panel">
-                    <span class="domain-label">Live URL</span>
-                    <a
-                        :href="tenant.domain"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        class="domain-link"
-                    >
-                        {{ tenant.domain }}
-                    </a>
-
-
-<!-- comment local url starts here -->
-
-   <!-- <div class="domain-info">
-                        <div class="domain-row">
-                            <span>Environment</span>
-                            <strong>{{ tenant.environment }}</strong>
+            <!-- Main Overview -->
+            <section class="main-grid">
+                <!-- Overview -->
+                <div class="card overview-card">
+                    <div class="card-header">
+                        <div>
+                            <h2>Workspace Overview</h2>
+                            <p>Core school and account access information.</p>
                         </div>
-                        <div class="domain-row">
-                            <span>Tenant Subdomain</span>
-                            <a
-                        :href="tenant.defaultLocalDomain"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        class="domain-link"
-                    >
-                        {{ tenant.defaultLocalDomain }}
-                    </a>
 
+                        <span class="pill pill-blue">
+                            {{ tenant.billingStatus }}
+                        </span>
+                    </div>
+
+                    <div class="school-box">
+                        <div class="school-logo">
+                            {{ schoolInitials }}
                         </div>
-                    </div> -->
 
+                        <div>
+                            <div class="school-name">
+                                {{ tenant.schoolName }}
+                            </div>
 
-                    <!-- comment local url ends here -->
+                            <div class="school-meta">
+                                {{ tenant.schoolType }}
+                            </div>
 
+                            <div class="school-meta">
+                                {{ tenant.location }}
+                            </div>
+                        </div>
+                    </div>
 
+                    <!-- Premium Credential Section -->
+                    <div class="credential-section">
+                        <div class="credential-card principal-card">
+                            <div class="credential-glow"></div>
 
+                            <div class="credential-top">
+                                <div class="credential-icon">
+                                    👨‍🏫
+                                </div>
+
+                                <div class="credential-badge">
+                                    PRINCIPAL ACCESS
+                                </div>
+                            </div>
+
+                            <div class="credential-label">
+                                Principal ID
+                            </div>
+
+                            <div class="credential-id">
+                                {{ tenant.principalLoginUserId }}
+                            </div>
+
+                            <div class="credential-pin-box">
+                                <span>Principal PIN</span>
+                                <strong>{{ tenant.principalPin }}</strong>
+                            </div>
+                        </div>
+
+                        <div class="credential-card admin-card">
+                            <div class="credential-glow"></div>
+
+                            <div class="credential-top">
+                                <div class="credential-icon">
+                                    🛡️
+                                </div>
+
+                                <div class="credential-badge">
+                                    ADMIN ACCESS
+                                </div>
+                            </div>
+
+                            <div class="credential-label">
+                                Administrator ID
+                            </div>
+
+                            <div class="credential-id">
+                                {{ tenant.adminLoginUserId }}
+                            </div>
+
+                            <div class="credential-pin-box">
+                                <span>Admin PIN</span>
+                                <strong>{{ tenant.adminPin }}</strong>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
-                <div class="domain-actions">
-                    <button class="btn btn-dark btn-small" @click="openSchoolSystem">Open</button>
-                    <button class="btn btn-light btn-small" @click="copyDomain">Copy URL</button>
+                <!-- Minimal Premium Domain -->
+                <div class="card domain-card">
+                    <div class="card-header">
+                        <div>
+                            <h2>School Domain</h2>
+                            <p>Live access details.</p>
+                        </div>
+
+                        <span class="pill pill-green">
+                            {{ tenant.sslStatus }}
+                        </span>
+                    </div>
+
+                    <div class="domain-panel">
+                        <span class="domain-label">
+                            Live URL
+                        </span>
+
+                        <a
+                            class="domain-link"
+                            :href="tenant.domain.startsWith('http') ? tenant.domain : `https://${tenant.domain}`"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                        >
+                            {{ tenant.domain }}
+                        </a>
+
+                        <!-- comment local url starts here -->
+
+                        <!--
+                        <div class="domain-info">
+                            <div class="domain-row">
+                                <span>Environment</span>
+                                <strong>{{ tenant.environment }}</strong>
+                            </div>
+
+                            <div class="domain-row">
+                                <span>Tenant Subdomain</span>
+
+                                <a
+                                    class="domain-link"
+                                    :href="tenant.defaultLocalDomain.startsWith('http') ? tenant.defaultLocalDomain : `https://${tenant.defaultLocalDomain}`"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                >
+                                    {{ tenant.defaultLocalDomain }}
+                                </a>
+                            </div>
+                        </div>
+                        -->
+
+                        <!-- comment local url ends here -->
+                    </div>
+
+                    <div class="domain-actions">
+                        <button class="btn btn-dark btn-small" @click="openSchoolSystem">
+                            Open
+                        </button>
+
+                        <button class="btn btn-light btn-small" @click="copyDomain">
+                            Copy URL
+                        </button>
+                    </div>
                 </div>
-            </div>
-        </section>
-</template>
+            </section>
+        </template>
     </div>
-
 </template>
 
 <script setup>
 import { getWorkspaceDashboard } from '@/services/auth.js'
 import { computed, onMounted, reactive, ref } from 'vue'
-
+import { useRouter } from 'vue-router'
+const router = useRouter()
 const loading = ref(false)
 const error = ref('')
+
 
 const tenant = reactive({
   schoolName: '',
@@ -180,7 +257,6 @@ const tenant = reactive({
   location: '',
   contactEmail: '',
   defaultLocalDomain: '',
-
 
   planName: 'Standard Plan',
   billingCycle: 'Billed Per Term',
@@ -263,7 +339,7 @@ async function fetchDashboard() {
   const tenantCode = localStorage.getItem('tenantCode')
 
   if (!tenantCode) {
-    error.value = 'Tenant code not found. Please login again.'
+    router.replace('/auth/login')
     return
   }
 
@@ -272,13 +348,8 @@ async function fetchDashboard() {
   try {
     const response = await getWorkspaceDashboard(tenantCode)
 
-
-
-
     applyDashboardData(response.data)
   } catch (err) {
-
-
     error.value =
       err.response?.data?.error ||
       err.response?.data?.message ||
@@ -317,72 +388,116 @@ onMounted(() => {
 })
 </script>
 
-
 <style scoped>
 * {
     box-sizing: border-box;
     font-family: Inter, sans-serif;
 }
+
 .dashboard-state {
-  padding: 24px;
-  border-radius: 18px;
-  background: #ffffff;
-  color: #111827;
-  font-weight: 700;
+    padding: 28px;
+    border-radius: 22px;
+    background: #ffffff;
+    color: #111827;
+    font-weight: 800;
+    box-shadow: 0 18px 45px rgba(15, 23, 42, 0.08);
 }
 
 .dashboard-error {
-  color: #991b1b;
-  background: #fee2e2;
+    color: #991b1b;
+    background: #fee2e2;
 }
 
 .workspace-page {
     max-width: 1320px;
     margin: 0 auto;
     padding: 24px;
-    background: #f8fafc;
     min-height: 100vh;
     color: #0f172a;
+    background:
+        radial-gradient(circle at top left, rgba(37, 99, 235, 0.08), transparent 30%),
+        radial-gradient(circle at top right, rgba(251, 191, 36, 0.08), transparent 26%),
+        linear-gradient(180deg, #f8fafc 0%, #eef4ff 100%);
 }
 
 /* Hero */
 .hero {
+    position: relative;
+    overflow: hidden;
     display: flex;
     justify-content: space-between;
-    align-items: flex-start;
-    gap: 20px;
-    background: linear-gradient(180deg, #ffffff 0%, #fbfdff 100%);
-    border: 1px solid #e2e8f0;
-    border-radius: 24px;
-    padding: 24px;
-    margin-bottom: 20px;
-    box-shadow: 0 12px 30px rgba(15, 23, 42, 0.04);
+    align-items: center;
+    gap: 24px;
+    margin-bottom: 24px;
+    padding: 34px;
+    border-radius: 32px;
+    color: #ffffff;
+    background:
+        radial-gradient(circle at 90% 10%, rgba(59, 130, 246, 0.35), transparent 34%),
+        radial-gradient(circle at 20% 10%, rgba(250, 204, 21, 0.16), transparent 28%),
+        linear-gradient(135deg, #07111f 0%, #0f172a 48%, #111827 100%);
+    box-shadow:
+        0 24px 70px rgba(15, 23, 42, 0.22),
+        inset 0 1px 1px rgba(255, 255, 255, 0.08);
+}
+
+.hero::before {
+    content: '';
+    position: absolute;
+    width: 260px;
+    height: 260px;
+    top: -120px;
+    right: -80px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.07);
+}
+
+.hero::after {
+    content: '';
+    position: absolute;
+    width: 160px;
+    height: 160px;
+    bottom: -90px;
+    left: 38%;
+    border-radius: 999px;
+    background: rgba(96, 165, 250, 0.12);
+}
+
+.hero-content,
+.hero-actions {
+    position: relative;
+    z-index: 2;
 }
 
 .hero-badge {
     display: inline-flex;
     align-items: center;
-    padding: 6px 12px;
+    padding: 8px 14px;
+    margin-bottom: 14px;
     border-radius: 999px;
-    background: #e0ecff;
-    color: #1d4ed8;
+    background: rgba(255, 255, 255, 0.12);
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    color: #ffffff;
     font-size: 12px;
-    font-weight: 700;
-    margin-bottom: 12px;
+    font-weight: 900;
+    letter-spacing: 0.04em;
+    backdrop-filter: blur(12px);
 }
 
 .hero h1 {
-    margin: 0 0 8px;
-    font-size: 2rem;
-    font-weight: 800;
-    letter-spacing: -0.02em;
+    margin: 0 0 10px;
+    color: #ffffff;
+    font-size: 2.45rem;
+    font-weight: 950;
+    letter-spacing: -0.045em;
 }
 
 .hero p {
+    max-width: 760px;
     margin: 0;
-    color: #64748b;
-    line-height: 1.6;
-    max-width: 720px;
+    color: #cbd5e1;
+    line-height: 1.7;
+    font-size: 0.98rem;
 }
 
 .hero-actions {
@@ -395,66 +510,109 @@ onMounted(() => {
 .summary-grid {
     display: grid;
     grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 16px;
-    margin-bottom: 20px;
+    gap: 18px;
+    margin-bottom: 24px;
 }
 
 .summary-card {
-    background: #ffffff;
-    border: 1px solid #e2e8f0;
-    border-radius: 18px;
-    padding: 18px;
-    box-shadow: 0 6px 18px rgba(15, 23, 42, 0.03);
+    position: relative;
+    overflow: hidden;
+    min-height: 132px;
+    padding: 22px;
+    border-radius: 24px;
+    background: rgba(255, 255, 255, 0.82);
+    border: 1px solid rgba(255, 255, 255, 0.86);
+    backdrop-filter: blur(16px);
+    box-shadow: 0 18px 45px rgba(15, 23, 42, 0.07);
+}
+
+.premium-summary-card::after {
+    content: '';
+    position: absolute;
+    width: 140px;
+    height: 140px;
+    right: -70px;
+    top: -70px;
+    border-radius: 999px;
+    background: rgba(37, 99, 235, 0.09);
+}
+
+.summary-icon {
+    width: 38px;
+    height: 38px;
+    margin-bottom: 14px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #1d4ed8, #2563eb);
+    color: #ffffff;
+    font-weight: 900;
+    box-shadow: 0 12px 25px rgba(37, 99, 235, 0.25);
 }
 
 .summary-label {
     display: block;
-    font-size: 0.82rem;
-    color: #64748b;
     margin-bottom: 8px;
-    font-weight: 600;
+    color: #64748b;
+    font-size: 0.82rem;
+    font-weight: 800;
 }
 
 .summary-card strong {
     display: block;
-    font-size: 1.45rem;
-    font-weight: 800;
     margin-bottom: 6px;
     color: #0f172a;
+    font-size: 1.45rem;
+    font-weight: 950;
+    letter-spacing: -0.03em;
 }
 
 .summary-card small {
     color: #64748b;
-    font-size: 0.84rem;
+    font-size: 0.86rem;
 }
 
 /* Main grid */
 .main-grid {
     display: grid;
-    grid-template-columns: 1.3fr 0.9fr;
-    gap: 20px;
+    grid-template-columns: 1.35fr 0.9fr;
+    gap: 22px;
 }
 
 .card {
-    background: linear-gradient(180deg, #ffffff 0%, #fbfdff 100%);
-    border: 1px solid #e2e8f0;
-    border-radius: 24px;
-    padding: 22px;
-    box-shadow: 0 10px 26px rgba(15, 23, 42, 0.04);
+    position: relative;
+    overflow: hidden;
+    padding: 26px;
+    border-radius: 32px;
+    background: rgba(255, 255, 255, 0.88);
+    border: 1px solid rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(18px);
+    box-shadow: 0 22px 55px rgba(15, 23, 42, 0.08);
+    transition: transform 0.28s ease, box-shadow 0.28s ease;
+}
+
+.card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 26px 70px rgba(15, 23, 42, 0.11);
 }
 
 .card-header {
+    position: relative;
+    z-index: 2;
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
     gap: 14px;
-    margin-bottom: 18px;
+    margin-bottom: 22px;
 }
 
 .card-header h2 {
     margin: 0 0 6px;
-    font-size: 1.1rem;
-    font-weight: 800;
+    color: #0f172a;
+    font-size: 1.15rem;
+    font-weight: 950;
+    letter-spacing: -0.02em;
 }
 
 .card-header p {
@@ -467,14 +625,15 @@ onMounted(() => {
 .pill {
     display: inline-flex;
     align-items: center;
-    padding: 6px 10px;
+    padding: 7px 12px;
     border-radius: 999px;
     font-size: 12px;
-    font-weight: 700;
+    font-weight: 900;
+    white-space: nowrap;
 }
 
 .pill-blue {
-    background: #e0ecff;
+    background: #dbeafe;
     color: #1d4ed8;
 }
 
@@ -485,29 +644,40 @@ onMounted(() => {
 
 /* School box */
 .school-box {
+    position: relative;
+    z-index: 2;
     display: flex;
     align-items: center;
-    gap: 14px;
-    margin-bottom: 18px;
+    gap: 16px;
+    margin-bottom: 24px;
+    padding: 18px;
+    border-radius: 24px;
+    background: linear-gradient(135deg, #f8fafc, #ffffff);
+    border: 1px solid #e2e8f0;
 }
 
 .school-logo {
-    width: 58px;
-    height: 58px;
-    border-radius: 18px;
-    background: linear-gradient(135deg, #1d4ed8, #0f172a);
-    color: white;
+    width: 66px;
+    height: 66px;
+    flex-shrink: 0;
+    border-radius: 22px;
+    background:
+        radial-gradient(circle at top right, rgba(255, 255, 255, 0.28), transparent 38%),
+        linear-gradient(135deg, #1d4ed8, #0f172a);
+    color: #ffffff;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-weight: 800;
-    font-size: 1rem;
+    font-weight: 950;
+    font-size: 1.05rem;
+    box-shadow: 0 14px 30px rgba(37, 99, 235, 0.3);
 }
 
 .school-name {
-    font-size: 1rem;
-    font-weight: 800;
-    margin-bottom: 4px;
+    margin-bottom: 5px;
+    color: #0f172a;
+    font-size: 1.03rem;
+    font-weight: 950;
 }
 
 .school-meta {
@@ -516,58 +686,230 @@ onMounted(() => {
     line-height: 1.5;
 }
 
-/* Info grid */
-.info-grid {
+/* Premium Credentials */
+.credential-section {
+    position: relative;
+    z-index: 2;
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+}
+
+.credential-card {
+    position: relative;
+    overflow: hidden;
+    min-height: 245px;
+    padding: 24px;
+    border-radius: 28px;
+    color: #ffffff;
+    isolation: isolate;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    animation: floatAttention 4.5s ease-in-out infinite;
+}
+
+.credential-card:hover {
+    transform: translateY(-6px) scale(1.01);
+}
+
+.credential-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -2;
+}
+
+.credential-card::after {
+    content: '';
+    position: absolute;
+    inset: 1px;
+    z-index: -1;
+    border-radius: 27px;
+    background:
+        linear-gradient(
+            135deg,
+            rgba(255, 255, 255, 0.16),
+            rgba(255, 255, 255, 0.03)
+        );
+    pointer-events: none;
+}
+
+.principal-card {
+    background:
+        radial-gradient(circle at 90% 10%, rgba(255, 255, 255, 0.34), transparent 26%),
+        linear-gradient(135deg, #1d4ed8 0%, #2563eb 46%, #60a5fa 100%);
+    box-shadow:
+        0 22px 45px rgba(37, 99, 235, 0.32),
+        inset 0 1px 1px rgba(255, 255, 255, 0.18);
+}
+
+.admin-card {
+    animation-delay: 0.6s;
+    background:
+        radial-gradient(circle at 90% 10%, rgba(255, 255, 255, 0.16), transparent 26%),
+        linear-gradient(135deg, #020617 0%, #0f172a 48%, #334155 100%);
+    box-shadow:
+        0 22px 45px rgba(15, 23, 42, 0.32),
+        inset 0 1px 1px rgba(255, 255, 255, 0.1);
+}
+
+.credential-glow {
+    position: absolute;
+    width: 170px;
+    height: 170px;
+    top: -88px;
+    right: -78px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.18);
+    filter: blur(1px);
+}
+
+.credential-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     gap: 12px;
+    margin-bottom: 22px;
 }
 
-.info-item {
-    background: #f8fafc;
-    border: 1px solid #e2e8f0;
-    border-radius: 14px;
-    padding: 14px;
+.credential-icon {
+    width: 46px;
+    height: 46px;
+    border-radius: 17px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.45rem;
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(12px);
 }
 
-.info-item span {
-    display: block;
-    font-size: 0.8rem;
-    color: #64748b;
-    margin-bottom: 6px;
+.credential-badge {
+    padding: 7px 12px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.15);
+    color: #ffffff;
+    font-size: 0.68rem;
+    font-weight: 950;
+    letter-spacing: 0.09em;
+    text-align: right;
+    backdrop-filter: blur(12px);
 }
 
-.info-item strong {
-    color: #0f172a;
-    font-size: 0.95rem;
+.credential-label {
+    margin-bottom: 8px;
+    color: rgba(255, 255, 255, 0.82);
+    font-size: 0.86rem;
+    font-weight: 800;
+}
+
+.credential-id {
+    min-height: 45px;
+    color: #ffffff;
+    font-size: 1.6rem;
+    line-height: 1.15;
+    font-weight: 950;
+    letter-spacing: -0.035em;
     word-break: break-word;
 }
 
-/* Domain minimal */
-.domain-panel {
-    background: linear-gradient(135deg, #eff6ff 0%, #f8fbff 100%);
-    border: 1px solid #dbeafe;
+.credential-pin-box {
+    margin-top: 22px;
+    padding: 16px;
     border-radius: 18px;
-    padding: 18px;
+    background: rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    backdrop-filter: blur(14px);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 14px;
+}
+
+.credential-pin-box span {
+    color: rgba(255, 255, 255, 0.82);
+    font-size: 0.78rem;
+    font-weight: 850;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+}
+
+.credential-pin-box strong {
+    color: #ffffff;
+    font-size: 1.2rem;
+    font-weight: 950;
+    letter-spacing: 0.12em;
+    word-break: break-word;
+}
+
+@keyframes floatAttention {
+    0% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-4px);
+    }
+
+    100% {
+        transform: translateY(0);
+    }
+}
+
+/* Domain */
+.domain-card::before {
+    content: '';
+    position: absolute;
+    width: 220px;
+    height: 220px;
+    top: -120px;
+    right: -110px;
+    border-radius: 999px;
+    background: rgba(37, 99, 235, 0.08);
+}
+
+.domain-panel {
+    position: relative;
+    overflow: hidden;
+    padding: 24px;
+    border-radius: 26px;
+    background:
+        radial-gradient(circle at top right, rgba(59, 130, 246, 0.13), transparent 34%),
+        linear-gradient(135deg, #eff6ff 0%, #ffffff 100%);
+    border: 1px solid #dbeafe;
+}
+
+.domain-panel::after {
+    content: '';
+    position: absolute;
+    width: 180px;
+    height: 180px;
+    top: -90px;
+    right: -90px;
+    border-radius: 999px;
+    background: rgba(37, 99, 235, 0.08);
 }
 
 .domain-label {
+    position: relative;
+    z-index: 2;
     display: block;
-    font-size: 0.78rem;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
+    margin-bottom: 10px;
     color: #64748b;
-    margin-bottom: 8px;
-    font-weight: 700;
+    font-size: 0.75rem;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
 }
 
 .domain-link {
+    position: relative;
+    z-index: 2;
     display: inline-block;
+    margin-bottom: 4px;
     color: #1d4ed8;
-    font-size: 1.05rem;
-    font-weight: 800;
+    font-size: 1.08rem;
+    font-weight: 950;
     text-decoration: none;
-    margin-bottom: 14px;
     word-break: break-word;
 }
 
@@ -575,19 +917,22 @@ onMounted(() => {
     text-decoration: underline;
 }
 
-.domain-meta {
+.domain-info {
+    position: relative;
+    z-index: 2;
     display: flex;
     flex-direction: column;
     gap: 10px;
+    margin-top: 14px;
 }
 
 .domain-row {
     display: flex;
     justify-content: space-between;
     gap: 12px;
-    font-size: 0.9rem;
     padding-top: 10px;
-    border-top: 1px solid rgba(148, 163, 184, 0.18);
+    border-top: 1px solid rgba(148, 163, 184, 0.22);
+    font-size: 0.9rem;
 }
 
 .domain-row:first-child {
@@ -608,42 +953,44 @@ onMounted(() => {
 .domain-actions {
     display: flex;
     gap: 10px;
-    margin-top: 16px;
+    margin-top: 18px;
     flex-wrap: wrap;
 }
 
 /* Buttons */
 .btn {
     border: none;
-    border-radius: 12px;
-    padding: 12px 16px;
-    font-weight: 700;
+    border-radius: 15px;
+    padding: 13px 18px;
+    font-weight: 900;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: transform 0.22s ease, box-shadow 0.22s ease, background 0.22s ease;
 }
 
 .btn-dark {
-    background: #0f172a;
+    background: linear-gradient(135deg, #2563eb, #1d4ed8);
     color: #ffffff;
+    box-shadow: 0 14px 28px rgba(37, 99, 235, 0.31);
 }
 
 .btn-dark:hover {
-    background: #111827;
-    transform: translateY(-1px);
+    transform: translateY(-2px);
+    box-shadow: 0 18px 38px rgba(37, 99, 235, 0.4);
 }
 
 .btn-light {
-    background: #f1f5f9;
+    background: #f8fafc;
     color: #0f172a;
     border: 1px solid #e2e8f0;
 }
 
 .btn-light:hover {
-    background: #eaf1f8;
+    background: #eef4ff;
+    transform: translateY(-2px);
 }
 
 .btn-small {
-    padding: 10px 14px;
+    padding: 11px 15px;
     font-size: 0.88rem;
 }
 
@@ -665,6 +1012,12 @@ onMounted(() => {
 
     .hero {
         flex-direction: column;
+        align-items: flex-start;
+        padding: 26px;
+    }
+
+    .hero h1 {
+        font-size: 2rem;
     }
 
     .hero-actions {
@@ -673,17 +1026,43 @@ onMounted(() => {
     }
 
     .summary-grid,
-    .info-grid {
+    .credential-section {
         grid-template-columns: 1fr;
+    }
+
+    .card {
+        padding: 20px;
+        border-radius: 26px;
+    }
+
+    .school-box {
+        align-items: flex-start;
+    }
+
+    .credential-id {
+        font-size: 1.35rem;
+    }
+
+    .credential-pin-box {
+        flex-direction: column;
+        align-items: flex-start;
     }
 
     .btn {
         width: 100%;
     }
 
+    .domain-actions {
+        flex-direction: column;
+    }
+
     .domain-row {
         flex-direction: column;
         align-items: flex-start;
+    }
+
+    .domain-row strong {
+        text-align: left;
     }
 }
 </style>
