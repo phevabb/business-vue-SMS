@@ -240,11 +240,11 @@
 
 
 
-
 <script setup>
 import { getBillingDashboard } from '@/adminBox/services/superadminApi.js'
 import { computed, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
+
 const router = useRouter()
 
 const searchQuery = ref('')
@@ -266,38 +266,56 @@ const summary = ref({
 
 const schools = ref([])
 
-
-
 const fetchBillingDashboard = async () => {
   loading.value = true
   errorMessage.value = ''
 
   try {
-    const data = await getBillingDashboard()
+    const response = await getBillingDashboard()
 
-    console.log('Billing dashboard data: print', data)
+    /**
+     * Supports both cases:
+     *
+     * Case 1: getBillingDashboard returns response.data
+     * payload = response
+     *
+     * Case 2: getBillingDashboard returns full Axios response
+     * payload = response.data
+     */
+    const payload = response?.data ?? response
+
+    console.log('Billing dashboard payload:', payload)
+
+    const dashboardSummary = payload?.summary || {}
+    const dashboardSchools = Array.isArray(payload?.schools)
+      ? payload.schools
+      : []
 
     summary.value = {
-      totalSchools: data.data.summary?.totalSchools ?? 0,
-      activeSchools: data.data.summary?.activeSchools ?? 0,
-      totalStudents: data.data.summary?.totalStudents ?? 0,
-      billingRatePerStudent: data.data.summary?.billingRatePerStudent ?? 0,
-      estimatedBilling: data.data.summary?.estimatedBilling ?? 0,
-      currentAcademicYear: data.data.summary?.currentAcademicYear ?? '',
-      currentTerm: data.data.summary?.currentTerm ?? '',
+      totalSchools: dashboardSummary.totalSchools ?? 0,
+      activeSchools: dashboardSummary.activeSchools ?? 0,
+      totalStudents: dashboardSummary.totalStudents ?? 0,
+      billingRatePerStudent: dashboardSummary.billingRatePerStudent ?? 0,
+      estimatedBilling: dashboardSummary.estimatedBilling ?? 0,
+      currentAcademicYear: dashboardSummary.currentAcademicYear ?? '',
+      currentTerm: dashboardSummary.currentTerm ?? '',
     }
 
-    schools.value = Array.isArray(data.data.schools) ? data.data.schools : []
+    schools.value = dashboardSchools
   } catch (error) {
     console.error('Billing dashboard error:', error)
+
     errorMessage.value =
       error?.response?.data?.message ||
+      error?.response?.data?.error ||
+      error?.response?.data ||
       error?.message ||
       'Unable to load billing dashboard'
   } finally {
     loading.value = false
   }
 }
+
 onMounted(() => {
   fetchBillingDashboard()
 })
@@ -305,7 +323,6 @@ onMounted(() => {
 const statusOptions = [
   {
     label: 'Active',
-
     value: 'ACTIVE',
   },
   {
@@ -354,6 +371,7 @@ const filteredSchools = computed(() => {
     const schoolName = school.schoolName || ''
     const tenantCode = school.tenantCode || ''
     const region = school.region || ''
+    const status = school.status || ''
 
     const matchesSearch =
       !query ||
@@ -362,7 +380,7 @@ const filteredSchools = computed(() => {
       region.toLowerCase().includes(query)
 
     const matchesStatus =
-      !selectedStatus.value || school.status === selectedStatus.value
+      !selectedStatus.value || status === selectedStatus.value
 
     const matchesRegion =
       !selectedRegion.value || region === selectedRegion.value
@@ -416,7 +434,7 @@ const refreshSchools = () => {
 }
 
 const exportReport = () => {
-
+  console.log('Export report clicked')
 }
 
 const viewBilling = (school) => {
@@ -428,9 +446,6 @@ const viewBilling = (school) => {
   })
 }
 </script>
-
-
-
 
 
 

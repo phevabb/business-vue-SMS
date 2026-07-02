@@ -274,7 +274,7 @@
           icon="pi pi-check"
           class="dialog-generate-button"
           :loading="generating"
-          @click="generateManualInvoice(schoolInformation.tenantCode)"
+          @click="generateManualInvoice"
         />
       </template>
     </Dialog>
@@ -348,11 +348,16 @@
 
 
 
-
-
 <script setup>
 import BillingHistory from '@/adminBox/views/superadmin/BillingHistory.vue'
 import SchoolInformation from '@/adminBox/views/superadmin/SchoolInformation.vue'
+
+import {
+    generateManualTenantInvoice,
+    getTenantBillingInvoices,
+    getTenantBillingProfile,
+} from '@/adminBox/services/superadminApi.js'
+
 import { computed, onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
@@ -362,13 +367,12 @@ const route = useRoute()
 const refreshing = ref(false)
 const loading = ref(false)
 const generating = ref(false)
+
 const generateDialogVisible = ref(false)
 const invoiceDialogVisible = ref(false)
+
 const selectedInvoice = ref(null)
 const errorMessage = ref('')
-
-const API_BASE_URL =
-  import.meta.env.VITE_API_BASE_URL
 
 const routeTenantCode = computed(() => {
   return String(route.params.tenantCode || '').trim()
@@ -377,7 +381,7 @@ const routeTenantCode = computed(() => {
 const schoolInformation = ref({
   tenantId: null,
   schoolName: '',
-  tenantCode: routeTenantCode.value,
+  tenantCode: '',
   region: '',
   currentTerm: '',
   studentCount: 0,
@@ -389,11 +393,95 @@ const schoolInformation = ref({
 
 const billingHistory = ref([])
 
+const convertTenantCodeToCanonical = (value) => {
+  const rawValue = String(value || '').trim()
+
+  if (!rawValue) return ''
+
+  if (rawValue.includes('-')) {
+    return rawValue.toUpperCase()
+  }
+
+  const match = rawValue.match(/^([a-zA-Z]+)([0-9]+)$/)
+
+  if (!match) {
+    return rawValue.toUpperCase()
+  }
+
+  const prefix = match[1].toUpperCase()
+  const number = match[2]
+
+  return `${prefix}-${number}`
+}
+
+const normalizeTenantCode = (value) => {
+  return String(value || '')
+    .trim()
+    .replaceAll('-', '')
+    .replaceAll('_', '')
+    .replaceAll(' ', '')
+    .toLowerCase()
+}
+
+const getStoredTenantCode = () => {
+  return (
+    localStorage.getItem('tenantCode') ||
+    localStorage.getItem('selectedTenantCode') ||
+    localStorage.getItem('superAdminSelectedTenantCode') ||
+    ''
+  ).trim()
+}
+
+const getTenantCodeForApi = () => {
+  const storedTenantCode = getStoredTenantCode()
+  const schoolTenantCode = schoolInformation.value?.tenantCode || ''
+  const routeCode = routeTenantCode.value
+
+  const normalizedStored = normalizeTenantCode(storedTenantCode)
+  const normalizedSchool = normalizeTenantCode(schoolTenantCode)
+  const normalizedRoute = normalizeTenantCode(routeCode)
+
+  /**
+   * Use localStorage only if it belongs to this same tenant.
+   * This prevents billing the wrong school when localStorage is stale.
+   */
+  if (
+    storedTenantCode &&
+    (
+      normalizedStored === normalizedSchool ||
+      normalizedStored === normalizedRoute
+    )
+  ) {
+    return storedTenantCode
+  }
+
+  if (schoolTenantCode) {
+    return schoolTenantCode
+  }
+
+  if (routeCode) {
+    return convertTenantCodeToCanonical(routeCode)
+  }
+
+  return ''
+}
+
+const getErrorMessage = (error, fallbackMessage) => {
+  return (
+    error?.response?.data?.message ||
+    error?.response?.data?.error ||
+    error?.response?.data ||
+    error?.message ||
+    fallbackMessage
+  )
+}
+
 const normalizeInvoice = (invoice) => {
-  const invoiceId = invoice.invoiceId || invoice.id
+  const invoiceId = invoice.invoiceId || invoice.id || Date.now()
 
   const academicYearName = invoice.academicYearName || ''
   const termName = invoice.termName || invoice.term || ''
+
   const term = academicYearName
     ? `${academicYearName} - ${termName}`
     : termName
@@ -438,75 +526,45 @@ const fetchTenantBillingProfile = async () => {
   errorMessage.value = ''
 
   try {
-    const response = await fetch(
-      `${API_BASE_URL}/api/superadmin/billing/tenant/${encodeURIComponent(routeTenantCode.value)}`,
-      {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
+    const data = await getTenantBillingProfile(routeTenantCode.value)
 
-          /**
-           * If your route requires JWT, uncomment and adjust token key.
-           */
-          // Authorization: `Bearer ${localStorage.getItem('superAdminToken')}`,
-        },
-      }
-    )
-
-    if (!response.ok) {
-      const message = await response.text()
-      throw new Error(message || 'Unable to load tenant billing profile')
-    }
-
-    const data = await response.json()
-    const school = data.school
-    const summary = data.summary
+    const school = data.school || {}
+    const summary = data.summary || {}
 
     schoolInformation.value = {
-      tenantId: school.tenantId,
-      schoolName: school.schoolName,
-      tenantCode: school.tenantCode,
-      region: school.region,
-      currentTerm: school.currentTerm,
+      tenantId: school.tenantId ?? null,
+      schoolName: school.schoolName || '',
+      tenantCode: school.tenantCode || routeTenantCode.value,
+      region: school.region || '',
+      currentTerm: school.currentTerm || '',
       studentCount: Number(school.studentCount || 0),
-      billingRatePerStudent: Number(summary?.billingRatePerStudent || 0),
-      status: school.status,
-      lastBillingDate: school.lastBillingDate,
+      billingRatePerStudent: Number(summary.billingRatePerStudent || 0),
+      status: school.status || '',
+      lastBillingDate: school.lastBillingDate || null,
       estimatedAmount: Number(school.estimatedAmount || 0),
     }
   } catch (error) {
     console.error('Tenant billing profile error:', error)
-    errorMessage.value = error.message || 'Unable to load tenant billing profile'
+
+    errorMessage.value = getErrorMessage(
+      error,
+      'Unable to load tenant billing profile'
+    )
   } finally {
     loading.value = false
   }
 }
 
 const fetchBillingHistory = async () => {
-  if (!routeTenantCode.value) return
+  const tenantCode = getTenantCodeForApi() || routeTenantCode.value
+
+  if (!tenantCode) {
+    billingHistory.value = []
+    return
+  }
 
   try {
-    const response = await fetch(
-      `${API_BASE_URL}/api/superadmin/billing/tenant/${encodeURIComponent(routeTenantCode.value)}/invoices`,
-      {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-
-          /**
-           * If your route requires JWT, uncomment and adjust token key.
-           */
-          // Authorization: `Bearer ${localStorage.getItem('superAdminToken')}`,
-        },
-      }
-    )
-
-    if (!response.ok) {
-      const message = await response.text()
-      throw new Error(message || 'Unable to load invoice history')
-    }
-
-    const data = await response.json()
+    const data = await getTenantBillingInvoices(tenantCode)
 
     billingHistory.value = Array.isArray(data)
       ? data.map(normalizeInvoice)
@@ -519,11 +577,14 @@ const fetchBillingHistory = async () => {
 
 const loadPageData = async () => {
   refreshing.value = true
+  errorMessage.value = ''
 
-  await fetchTenantBillingProfile()
-  await fetchBillingHistory()
-
-  refreshing.value = false
+  try {
+    await fetchTenantBillingProfile()
+    await fetchBillingHistory()
+  } finally {
+    refreshing.value = false
+  }
 }
 
 onMounted(() => {
@@ -550,29 +611,34 @@ const overdueInvoicesCount = computed(() => {
 })
 
 const unpaidInvoicesCount = computed(() => {
-  return billingHistory.value.filter((invoice) =>
-    ['PENDING', 'OVERDUE'].includes(invoice.status)
-  ).length
+  return billingHistory.value.filter((invoice) => {
+    return ['PENDING', 'OVERDUE'].includes(invoice.status)
+  }).length
 })
 
 const outstandingAmount = computed(() => {
   return billingHistory.value
-    .filter((invoice) => ['PENDING', 'OVERDUE'].includes(invoice.status))
-    .reduce((total, invoice) => total + Number(invoice.amount || 0), 0)
+    .filter((invoice) => {
+      return ['PENDING', 'OVERDUE'].includes(invoice.status)
+    })
+    .reduce((total, invoice) => {
+      return total + Number(invoice.amount || 0)
+    }, 0)
 })
 
 const latestInvoiceDate = computed(() => {
   if (!billingHistory.value.length) return 'No invoice yet'
 
-  const latest = [...billingHistory.value].sort(
-    (a, b) => new Date(b.issuedDate) - new Date(a.issuedDate)
-  )[0]
+  const latest = [...billingHistory.value].sort((a, b) => {
+    return new Date(b.issuedDate) - new Date(a.issuedDate)
+  })[0]
 
   return formatDate(latest.issuedDate)
 })
 
 const billingHealthScore = computed(() => {
   const total = billingHistory.value.length
+
   if (!total) return 0
 
   const paidScore = paidInvoicesCount.value * 100
@@ -586,6 +652,7 @@ const billingHealthLabel = computed(() => {
   if (billingHealthScore.value >= 80) return 'Excellent'
   if (billingHealthScore.value >= 60) return 'Good'
   if (billingHealthScore.value >= 40) return 'Needs Attention'
+
   return 'Critical'
 })
 
@@ -597,44 +664,32 @@ const openGenerateInvoiceDialog = () => {
   generateDialogVisible.value = true
 }
 
-const generateManualInvoice = async (tenantCode) => {
+const generateManualInvoice = async () => {
   generating.value = true
   errorMessage.value = ''
 
   try {
-    const response = await fetch(
-      `${API_BASE_URL}/api/superadmin/billing/manual-invoice`,
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
+    const tenantCodeForBilling = getTenantCodeForApi()
 
-          /**
-           * If your route requires JWT, uncomment and adjust token key.
-           */
-          // Authorization: `Bearer ${localStorage.getItem('superAdminToken')}`,
-        },
-        body: JSON.stringify({
-          tenantCode,
-          studentCount: schoolInformation.value.studentCount,
-        }),
-      }
-    )
-
-    if (!response.ok) {
-      const message = await response.text()
-      throw new Error(message || 'Unable to generate manual invoice')
+    if (!tenantCodeForBilling) {
+      throw new Error('Unable to resolve tenant code for billing.')
     }
+
+    await generateManualTenantInvoice({
+      tenantCode: tenantCodeForBilling,
+      studentCount: schoolInformation.value.studentCount,
+    })
 
     generateDialogVisible.value = false
 
-    /**
-     * Reload profile and invoices after successful invoice creation.
-     */
     await loadPageData()
   } catch (error) {
     console.error('Generate manual invoice error:', error)
-    errorMessage.value = error.message || 'Unable to generate manual invoice'
+
+    errorMessage.value = getErrorMessage(
+      error,
+      'Unable to generate manual invoice'
+    )
   } finally {
     generating.value = false
   }
@@ -698,10 +753,6 @@ const formatMoney = (amount) => {
   })
 }
 </script>
-
-
-
-
 
 <style scoped>
 .tenant-billing-page {

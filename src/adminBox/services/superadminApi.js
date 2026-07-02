@@ -98,14 +98,49 @@ export function updateSuperAdminAccountActive(accountId, isActive) {
 
 
 
-export function getBillingDashboard() {
-  return api.get('/api/superadmin/billing/dashboard')
 
 
+
+/**
+ * =========================
+ * SuperAdmin Billing
+ * =========================
+ */
+
+export async function getBillingDashboard() {
+  const response = await api.get('/api/superadmin/billing/dashboard')
+  return response.data
 }
 
 
 
+
+
+
+export async function getTenantBillingProfile(tenantCode) {
+  const response = await api.get(
+    `/api/superadmin/billing/tenant/${encodeURIComponent(tenantCode)}`
+  )
+
+  return response.data
+}
+
+export async function getTenantBillingInvoices(tenantCode) {
+  const response = await api.get(
+    `/api/superadmin/billing/tenant/${encodeURIComponent(tenantCode)}/invoices`
+  )
+
+  return response.data
+}
+
+export async function generateManualTenantInvoice(payload) {
+  const response = await api.post(
+    '/api/superadmin/billing/manual-invoice',
+    payload
+  )
+
+  return response.data
+}
 
 
 
