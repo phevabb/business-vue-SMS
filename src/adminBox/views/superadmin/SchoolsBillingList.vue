@@ -266,16 +266,9 @@ const summary = ref({
 
 const schools = ref([])
 
-/**
- * If your frontend and backend are both local:
- *
- * business backend:
- * http://127.0.0.1:9000
- *
- * If you already have a central API helper, you can replace this.
- */
+
 const API_BASE_URL =
-  import.meta.env.VITE_PUBLIC_API_BASE_URL || 'http://127.0.0.1:9000'
+  import.meta.env.VITE_API_BASE_URL
 
 const fetchBillingDashboard = async () => {
   loading.value = true

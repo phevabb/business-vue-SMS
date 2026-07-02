@@ -368,7 +368,7 @@ const selectedInvoice = ref(null)
 const errorMessage = ref('')
 
 const API_BASE_URL =
-  import.meta.env.VITE_PUBLIC_API_BASE_URL || 'http://127.0.0.1:9000'
+  import.meta.env.VITE_API_BASE_URL
 
 const routeTenantCode = computed(() => {
   return String(route.params.tenantCode || '').trim()

@@ -111,13 +111,7 @@ const generateManualInvoice = () => {
   }
 
 
-  // Later, replace this with your real backend call:
-  // POST http://127.0.0.1:9000/api/superadmin/billing/test-invoice
-  //
-  // body:
-  // {
-  //   tenantCode: school.value.tenantCode
-  // }
+
 
   alert(`Manual invoice generated for ${school.value.schoolName}`)
 }
