@@ -102,7 +102,7 @@ const refreshGeneratedData = () => {
     studentCount: generatedStudentCount,
   }
 
-  console.log('Generated school data refreshed:', school.value)
+
 }
 
 const generateManualInvoice = () => {
@@ -110,7 +110,6 @@ const generateManualInvoice = () => {
     tenantCode: school.value.tenantCode,
   }
 
-  console.log('Manual billing payload:', payload)
 
   // Later, replace this with your real backend call:
   // POST http://127.0.0.1:9000/api/superadmin/billing/test-invoice
