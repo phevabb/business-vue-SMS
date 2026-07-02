@@ -273,14 +273,7 @@ const fetchBillingDashboard = async () => {
   errorMessage.value = ''
 
   try {
-    const response = await getBillingDashboard()
-
-    if (!response.ok) {
-      const message = await response.text()
-      throw new Error(message || 'Unable to load billing dashboard')
-    }
-
-    const data = await response.json()
+    const data = await getBillingDashboard()
 
     summary.value = {
       totalSchools: data.summary?.totalSchools ?? 0,
@@ -295,12 +288,14 @@ const fetchBillingDashboard = async () => {
     schools.value = Array.isArray(data.schools) ? data.schools : []
   } catch (error) {
     console.error('Billing dashboard error:', error)
-    errorMessage.value = error.message || 'Unable to load billing dashboard'
+    errorMessage.value =
+      error?.response?.data?.message ||
+      error?.message ||
+      'Unable to load billing dashboard'
   } finally {
     loading.value = false
   }
 }
-
 onMounted(() => {
   fetchBillingDashboard()
 })
