@@ -242,9 +242,9 @@
 
 
 <script setup>
+import getBillingDashboard from '@/adminBox/services/superadminApi.js'
 import { computed, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
-
 const router = useRouter()
 
 const searchQuery = ref('')
@@ -267,26 +267,13 @@ const summary = ref({
 const schools = ref([])
 
 
-const API_BASE_URL =
-  import.meta.env.VITE_API_BASE_URL
 
 const fetchBillingDashboard = async () => {
   loading.value = true
   errorMessage.value = ''
 
   try {
-    const response = await fetch(`${API_BASE_URL}/api/superadmin/billing/dashboard`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-
-        /**
-         * If this route is protected by JWT, uncomment this
-         * and make sure your token key is correct.
-         */
-        // Authorization: `Bearer ${localStorage.getItem('superAdminToken')}`,
-      },
-    })
+    const response = await getBillingDashboard()
 
     if (!response.ok) {
       const message = await response.text()
@@ -321,6 +308,7 @@ onMounted(() => {
 const statusOptions = [
   {
     label: 'Active',
+
     value: 'ACTIVE',
   },
   {
