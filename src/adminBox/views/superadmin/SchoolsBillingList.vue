@@ -242,7 +242,7 @@
 
 
 <script setup>
-import getBillingDashboard from '@/adminBox/services/superadminApi.js'
+import { getBillingDashboard } from '@/adminBox/services/superadminApi.js'
 import { computed, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 const router = useRouter()
@@ -275,17 +275,19 @@ const fetchBillingDashboard = async () => {
   try {
     const data = await getBillingDashboard()
 
+    console.log('Billing dashboard data: print', data)
+
     summary.value = {
-      totalSchools: data.summary?.totalSchools ?? 0,
-      activeSchools: data.summary?.activeSchools ?? 0,
-      totalStudents: data.summary?.totalStudents ?? 0,
-      billingRatePerStudent: data.summary?.billingRatePerStudent ?? 0,
-      estimatedBilling: data.summary?.estimatedBilling ?? 0,
-      currentAcademicYear: data.summary?.currentAcademicYear ?? '',
-      currentTerm: data.summary?.currentTerm ?? '',
+      totalSchools: data.data.summary?.totalSchools ?? 0,
+      activeSchools: data.data.summary?.activeSchools ?? 0,
+      totalStudents: data.data.summary?.totalStudents ?? 0,
+      billingRatePerStudent: data.data.summary?.billingRatePerStudent ?? 0,
+      estimatedBilling: data.data.summary?.estimatedBilling ?? 0,
+      currentAcademicYear: data.data.summary?.currentAcademicYear ?? '',
+      currentTerm: data.data.summary?.currentTerm ?? '',
     }
 
-    schools.value = Array.isArray(data.schools) ? data.schools : []
+    schools.value = Array.isArray(data.data.schools) ? data.data.schools : []
   } catch (error) {
     console.error('Billing dashboard error:', error)
     errorMessage.value =

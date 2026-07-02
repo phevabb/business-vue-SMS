@@ -100,6 +100,8 @@ export function updateSuperAdminAccountActive(accountId, isActive) {
 
 export function getBillingDashboard() {
   return api.get('/api/superadmin/billing/dashboard')
+
+
 }
 
 
