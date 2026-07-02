@@ -438,7 +438,7 @@ const refreshSchools = () => {
 }
 
 const exportReport = () => {
-  console.log('Export report clicked')
+
 }
 
 const viewBilling = (school) => {
