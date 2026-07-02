@@ -39,7 +39,7 @@
           <h4>Support</h4>
           <a href="mailto:support@phenaschool.com">Contact Support</a>
           <a
-            href="https://calendly.com/phevab1/30min"
+            href="https://cal.com/emmanuel-aidoo-wphafq/30min"
             target="_blank"
             rel="noopener noreferrer"
           >

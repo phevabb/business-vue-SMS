@@ -93,6 +93,14 @@ export function updateSuperAdminAccountActive(accountId, isActive) {
   })
 }
 
+
+
+
+export function getSuperAdminProvisioningIssues() {
+  return api.get('/api/superadmin/billing/dashboard')
+}
+
+
 export function updateSuperAdminAccountStatus(accountId, payload) {
   return api.patch(`/api/super/accounts/${accountId}/status`, payload)
 }
@@ -149,9 +157,7 @@ export function getSuperAdminTransactionsByTenant(tenantCode) {
  * =========================
  */
 
-export function getSuperAdminProvisioningIssues() {
-  return api.get('/api/superadmin/provisioning/issues')
-}
+
 
 export function retryTenantProvisioning(accountId) {
   return api.post(`/api/superadmin/accounts/${accountId}/retry-provisioning`)

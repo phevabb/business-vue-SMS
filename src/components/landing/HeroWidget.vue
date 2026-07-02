@@ -22,7 +22,7 @@
    <Button
     label="Request Demo"
     as="a"
-    href="https://calendly.com/phevab1/30min"
+    href="https://cal.com/emmanuel-aidoo-wphafq/30min"
     target="_blank"
     rel="noopener noreferrer"
     rounded

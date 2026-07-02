@@ -117,8 +117,13 @@ const menuItems = [
     icon: '🧩',
   },
   {
-    label: 'Billing Calendar',
-    to: '/superadmin/billing-calendar',
+  label: 'Manual Billing',
+  to: '/superadmin/billing-list',
+  icon: '🧾',
+},
+  {
+    label: 'Academic Calendar',
+    to: '/superadmin/add-year-calendar',
     icon: '📅',
   },
   {
@@ -141,11 +146,7 @@ const menuItems = [
     to: '/superadmin/settings',
     icon: '🔐',
   },
-  {
-    label: 'Academic Calendar',
-    to: '/superadmin/add-year-calendar',
-    icon: '📅',
-  },
+
 ]
 
 const pageTitle = computed(() => {
@@ -162,6 +163,11 @@ const pageTitle = computed(() => {
     'superadmin-settings': 'Settings',
     'superadmin-change-password': 'Change Password',
     'superadmin-academic-calendar': 'Academic Calendar',
+
+     TenantBillingList: 'Manual Billing',
+         TenantBillingDetails: 'Tenant Billing Details',
+             TenantBillingHistory: 'Billing History',
+        TenantSchoolInformation: 'School Information',
   }
 
   return map[route.name] || 'SuperAdmin'

@@ -40,29 +40,64 @@ const routes = [
   },
 
   // Protected SuperAdmin
-  {
-    path: '/superadmin',
-    component: SuperAdminLayout,
-    meta: { superAdminGuestOnly: true },
+{
+  path: '/superadmin',
+  component: SuperAdminLayout,
+  meta: { superAdminGuestOnly: true },
 
-    // meta: { requiresSuperAdminAuth: true },
-    children: [
-      { path: '', redirect: '/superadmin/dashboard' },
-      { path: 'dashboard', name: 'superadmin-dashboard', component: () => import('@/adminBox/views/superadmin/SuperAdminDashboard.vue') },
-      { path: 'accounts', name: 'superadmin-accounts', component: () => import('@/adminBox/views/superadmin/SuperAdminAccounts.vue') },
-      { path: 'add-year-calendar', name: 'superadmin-add-year-calendar', component: () => import('@/adminBox/views/superadmin/SuperAdminAddYearCalendar.vue') },
+  children: [
+    {
+      path: '',
+      redirect: '/superadmin/dashboard',
+    },
+    {
+      path: 'dashboard',
+      name: 'superadmin-dashboard',
+      component: () => import('@/adminBox/views/superadmin/SuperAdminDashboard.vue'),
+    },
+    {
+      path: 'accounts',
+      name: 'superadmin-accounts',
+      component: () => import('@/adminBox/views/superadmin/SuperAdminAccounts.vue'),
+    },
+    {
+      path: 'tenants',
+      name: 'superadmin-tenants',
+      component: () => import('@/adminBox/views/superadmin/SuperAdminTenants.vue'),
+    },
+    {
+      path: 'add-year-calendar',
+      name: 'superadmin-add-year-calendar',
+      component: () => import('@/adminBox/views/superadmin/SuperAdminAddYearCalendar.vue'),
+    },
 
+    // Billing list: shows all schools
+    {
+      path: 'billing-list',
+      name: 'TenantBillingList',
+      component: () => import('@/adminBox/views/superadmin/SchoolsBillingList.vue'),
+    },
 
-      //   { path: 'accounts/:id', name: 'superadmin-account-details', component: () => import('@/adminBox/views/superadmin/SuperAdminAccountDetails.vue'), props: true },
-       { path: 'tenants', name: 'superadmin-tenants', component: () => import('@/adminBox/views/superadmin/SuperAdminTenants.vue') },
-    //   { path: 'tenants/:tenantCode', name: 'superadmin-tenant-details', component: () => import('@/adminBox/views/superadmin/SuperAdminTenantDetails.vue'), props: true },
-    //   { path: 'transactions', name: 'superadmin-transactions', component: () => import('@/adminBox/views/superadmin/SuperAdminTransactions.vue') },
-    //   { path: 'provisioning', name: 'superadmin-provisioning', component: () => import('@/adminBox/views/superadmin/SuperAdminProvisioning.vue') },
-    //   { path: 'audit-logs', name: 'superadmin-audit-logs', component: () => import('@/adminBox/views/superadmin/SuperAdminAuditLogs.vue') },
-    //   { path: 'settings', name: 'superadmin-settings', component: () => import('@/adminBox/views/superadmin/SuperAdminSettings.vue') },
-    //   { path: 'change-password', name: 'superadmin-change-password', component: () => import('@/adminBox/views/superadmin/SuperAdminChangePassword.vue') },
-    ],
-  },
+    // Billing details: shows one selected school
+    {
+      path: 'billing-details/:tenantCode',
+      name: 'TenantBillingDetails',
+      component: () => import('@/adminBox/views/superadmin/TenantBillingDetails.vue'),
+    },
+
+    {
+      path: 'billing-history',
+      name: 'TenantBillingHistory',
+      component: () => import('@/adminBox/views/superadmin/BillingHistory.vue'),
+    },
+
+    {
+      path: 'school-information',
+      name: 'TenantSchoolInformation',
+      component: () => import('@/adminBox/views/superadmin/SchoolInformation.vue'),
+    },
+  ],
+},
 
   // Protected normal business dashboard layout
   {

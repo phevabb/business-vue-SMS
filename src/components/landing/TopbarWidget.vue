@@ -49,7 +49,7 @@ function closeMobileMenu() {
         label="Request Demo"
         class="btn btn-dark"
         as="a"
-        href="https://calendly.com/phevab1/30min"
+        href="https://cal.com/emmanuel-aidoo-wphafq/30min"
         target="_blank"
       />
     </div>
@@ -97,7 +97,7 @@ function closeMobileMenu() {
           label="Request Demo"
           class="btn mobile-btn btn-dark"
           as="a"
-          href="https://calendly.com/phevab1/30min"
+          href="https://cal.com/emmanuel-aidoo-wphafq/30min"
           target="_blank"
           @click="closeMobileMenu"
         />
