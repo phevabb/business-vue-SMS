@@ -36,6 +36,11 @@ const model = ref([
         icon: 'pi pi-fw pi-tag',
         to: '/subscription',
       },
+      {
+        label: 'Transactions',
+        icon: 'pi pi-fw pi-dollar',
+        to: '/transactions',
+      },
       // {
       //   label: 'School Domain',
       //   icon: 'pi pi-fw pi-globe',
@@ -97,7 +102,7 @@ const model = ref([
       </div>
 
       <div class="brand-text">
-        <span>Phena Admin</span>
+        <span style="color: bisque;">Phena Admin</span>
         <strong>Workspace</strong>
       </div>
     </div>

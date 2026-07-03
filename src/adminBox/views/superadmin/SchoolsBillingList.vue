@@ -284,7 +284,7 @@ const fetchBillingDashboard = async () => {
      */
     const payload = response?.data ?? response
 
-    console.log('Billing dashboard payload:', payload)
+
 
     const dashboardSummary = payload?.summary || {}
     const dashboardSchools = Array.isArray(payload?.schools)
@@ -434,7 +434,7 @@ const refreshSchools = () => {
 }
 
 const exportReport = () => {
-  console.log('Export report clicked')
+
 }
 
 const viewBilling = (school) => {

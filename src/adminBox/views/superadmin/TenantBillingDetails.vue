@@ -528,6 +528,8 @@ const fetchTenantBillingProfile = async () => {
   try {
     const data = await getTenantBillingProfile(routeTenantCode.value)
 
+
+
     const school = data.school || {}
     const summary = data.summary || {}
 

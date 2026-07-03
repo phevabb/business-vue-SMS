@@ -37,7 +37,7 @@
         <CCol xs="12" md="6" lg="4">
           <div class="info-box">
             <small class="text-muted">Total Students</small>
-            <div class="fw-semibold">{{ school.studentCount }}</div>
+            <div class="fw-semibold">{{ Number(school.studentCount || 0).toLocaleString() }}</div>
           </div>
         </CCol>
 
@@ -75,47 +75,53 @@
   </CCard>
 </template>
 
-<script setup>
-import { computed, ref } from 'vue'
 
-const school = ref({
-  schoolName: 'Phena Vision Academy',
-  tenantCode: 'PHEVAB-327146',
-  currentTerm: '2025/2026 - Term 2',
-  studentCount: 119,
-  billingRatePerStudent: 5,
-  status: 'ACTIVE',
+
+
+<script setup>
+import { computed } from 'vue'
+
+const props = defineProps({
+  school: {
+    type: Object,
+    required: true,
+    default: () => ({
+      schoolName: '',
+      tenantCode: '',
+      currentTerm: '',
+      studentCount: 0,
+      billingRatePerStudent: 0,
+      status: '',
+    }),
+  },
 })
 
+const emit = defineEmits([
+  'refresh',
+  'generate-invoice',
+])
+
 const estimatedBill = computed(() => {
-  const studentCount = Number(school.value.studentCount || 0)
-  const rate = Number(school.value.billingRatePerStudent || 0)
+  const studentCount = Number(props.school?.studentCount || 0)
+  const rate = Number(props.school?.billingRatePerStudent || 0)
 
   return studentCount * rate
 })
 
 const refreshGeneratedData = () => {
-  const generatedStudentCount = Math.floor(Math.random() * 300) + 50
-
-  school.value = {
-    ...school.value,
-    studentCount: generatedStudentCount,
-  }
-
-
+  emit('refresh')
 }
 
 const generateManualInvoice = () => {
-  const payload = {
-    tenantCode: school.value.tenantCode,
-  }
-
-
-
-
-  alert(`Manual invoice generated for ${school.value.schoolName}`)
+  emit('generate-invoice')
 }
 </script>
+
+
+
+
+
+
 
 <style scoped>
 /* Main premium card animation */

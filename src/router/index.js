@@ -78,6 +78,12 @@ const routes = [
       component: () => import('@/adminBox/views/superadmin/SchoolsBillingList.vue'),
     },
 
+    {
+      path: 'transactions',
+      name: 'TenantTransactions',
+      component: () => import('@/adminBox/views/superadmin/SuperAdminTransactions.vue'),
+    },
+
     // Billing details: shows one selected school
     {
       path: 'billing-details/:tenantCode',
@@ -114,6 +120,9 @@ const routes = [
       { path: 'domain', name: 'domain', component: () => import('@/views/Domain.vue') },
       { path: 'billing', name: 'billing', component: () => import('@/views/Billing.vue') },
       { path: 'sms', name: 'sms', component: () => import('@/views/SMS.vue') },
+      { path: 'transactions', name: 'transactions', component: () => import('@/views/ClientTransactions.vue') },
+
+
     ],
   },
   {
