@@ -960,7 +960,7 @@ async function fetchDashboard() {
 
     calculateStats()
   } catch (err) {
-    console.error('Superadmin dashboard error:', err)
+
 
     error.value =
       err.response?.data?.error ||

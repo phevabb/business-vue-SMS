@@ -189,7 +189,7 @@
           </template>
         </Column>
 
-        <Column header="Last Billing">
+        <!-- <Column header="Last Billing">
           <template #body="{ data }">
             <div v-if="data.lastBillingDate">
               <div class="last-billing-date">
@@ -203,7 +203,7 @@
               <small class="muted-text">No invoice yet</small>
             </div>
           </template>
-        </Column>
+        </Column> -->
 
         <Column header="Status">
           <template #body="{ data }">
@@ -303,7 +303,7 @@ const fetchBillingDashboard = async () => {
 
     schools.value = dashboardSchools
   } catch (error) {
-    console.error('Billing dashboard error:', error)
+
 
     errorMessage.value =
       error?.response?.data?.message ||

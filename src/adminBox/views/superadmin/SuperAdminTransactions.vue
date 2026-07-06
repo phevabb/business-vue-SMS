@@ -393,7 +393,7 @@ async function fetchTransactions() {
       ? response.data
       : []
   } catch (err) {
-    console.error('Transactions error:', err)
+
 
     error.value =
       err.response?.data?.message ||

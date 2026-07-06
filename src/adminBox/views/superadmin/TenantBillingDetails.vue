@@ -546,7 +546,7 @@ const fetchTenantBillingProfile = async () => {
       estimatedAmount: Number(school.estimatedAmount || 0),
     }
   } catch (error) {
-    console.error('Tenant billing profile error:', error)
+
 
     errorMessage.value = getErrorMessage(
       error,
@@ -572,7 +572,7 @@ const fetchBillingHistory = async () => {
       ? data.map(normalizeInvoice)
       : []
   } catch (error) {
-    console.error('Billing history error:', error)
+
     billingHistory.value = []
   }
 }
@@ -686,7 +686,7 @@ const generateManualInvoice = async () => {
 
     await loadPageData()
   } catch (error) {
-    console.error('Generate manual invoice error:', error)
+
 
     errorMessage.value = getErrorMessage(
       error,

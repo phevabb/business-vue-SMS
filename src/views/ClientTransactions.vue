@@ -443,7 +443,7 @@ async function fetchTransactions() {
       ? response.data
       : []
   } catch (err) {
-    console.error('Client transactions error:', err)
+
 
     error.value =
       err.response?.data?.message ||
