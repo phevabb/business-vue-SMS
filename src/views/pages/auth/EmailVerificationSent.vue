@@ -28,9 +28,7 @@
       </p>
 
       <div class="actions">
-        <RouterLink to="auth/login" class="primary-btn">
-          Login here
-        </RouterLink>
+
 
         <RouterLink to="/" class="secondary-btn">
           Home
