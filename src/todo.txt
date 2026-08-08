@@ -62,7 +62,8 @@ routes to replace in production:
 2. superadminApi1.js
 
 
-imporint students
-test payments to activate
-remove year when creating school
-students profile must show kids id and pin (to help send to parents)
+
+
+
+
+

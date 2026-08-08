@@ -50,6 +50,24 @@ export const getWorkspaceDashboard = (tenantCode) => {
   })
 }
 
+
+export const updateSchoolBranding = (tenantCode, payload) => {
+  return api.put(`/api/accounts/update-school-branding`, payload, {
+    headers: {
+        'X-Tenant-Code': tenantCode,
+    },
+  })
+}
+
+
+export const getSchoolProfile = (tenantCode) => {
+  return api.get(`/api/accounts/school-profile/${tenantCode}`, {
+    headers: {
+    'X-Tenant-Code': tenantCode,
+    },
+  })
+}
+
 // ✅ LOGOUT
 export const logout = () => {
   return api.post('/api/auth/logout')
@@ -67,6 +85,12 @@ export function resetPassword(payload) {
 
 export function changePassword(payload) {
   return api.post('/api/auth/change-password', payload)
+}
+
+
+
+export function updatePins(payload) {
+  return api.put('/api/accounts/update-pins', payload)
 }
 
 export default api

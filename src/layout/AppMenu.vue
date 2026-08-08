@@ -59,16 +59,16 @@ const model = ref([
     ],
   },
 
-  // {
-  //   label: 'Settings',
-  //   items: [
-  //     {
-  //       label: 'School Settings',
-  //       icon: 'pi pi-fw pi-cog',
-  //       to: '/settings',
-  //     },
-  //   ],
-  // },
+  {
+    label: 'Settings',
+    items: [
+      {
+        label: 'School Settings',
+        icon: 'pi pi-fw pi-cog',
+        to: '/settings',
+      },
+    ],
+  },
 
   {
     label: 'Account',

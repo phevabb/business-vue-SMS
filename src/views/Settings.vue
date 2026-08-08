@@ -1,236 +1,604 @@
+
 <template>
   <div class="settings-page">
-    <section class="settings-hero">
-      <div>
-        <span class="badge">Workspace Settings</span>
-        <h1 style="color: papayawhip;">School Settings</h1>
-        <p>
-          Update your school profile, logo, contact details, and workspace information.
-        </p>
-      </div>
+
+    <section class="hero-card">
+      <h1>School Settings</h1>
+
+      <p>
+        Manage your school's branding, administrator profile,
+        security PINs and account information.
+      </p>
     </section>
 
-    <section class="settings-grid">
+    <div class="settings-layout">
+
+      <!-- SCHOOL -->
+
       <div class="settings-card">
-        <div class="card-header">
-          <div>
-            <h2>School Profile</h2>
-            <p>Manage the basic identity of your school.</p>
+
+        <h2>School Branding</h2>
+
+        <div class="logo-section">
+
+          <div class="logo-preview">
+            <img
+              v-if="logoPreview"
+              :src="logoPreview"
+              alt="School Logo"
+            />
+
+            <span
+              v-else
+              class="logo-initials"
+            >
+              {{ schoolInitials }}
+            </span>
           </div>
+
+          <label class="upload-btn">
+            Update Logo
+
+            <input
+              type="file"
+              accept="image/png,image/jpeg,image/webp"
+              @change="handleLogoUpload"
+            >
+          </label>
+
         </div>
 
-        <form class="settings-form" @submit.prevent="saveSettings">
-          <div class="logo-section">
-            <div class="logo-preview">
-              logoPreview
-              ?<span v-if="!logoPreview" class="logo-initials">{{ schoolInitials }}</span>
-              :<img :src="logoPreview" alt="School Logo" />
-            </div>
+        <div class="field">
+          <label>School Name</label>
 
-            <label class="upload-btn">
-              Change Logo
-              <input
-                type="file"
-                accept="image/png,image/jpeg,image/webp"
-                @change="handleLogoUpload"
-              />
-            </label>
-          </div>
-
-          <div class="field">
-            <label>School Name</label>
-            <input
-              v-model="form.schoolName"
-              type="text"
-              placeholder="Enter school name"
-            />
-          </div>
-
-          <div class="grid">
-            <div class="field">
-              <label>Email</label>
-              <input
-                v-model="form.email"
-                type="email"
-                placeholder="school@email.com"
-              />
-            </div>
-
-            <div class="field">
-              <label>Phone Number</label>
-              <input
-                v-model="form.phoneNumber"
-                type="text"
-                placeholder="+233..."
-              />
-            </div>
-          </div>
-
-          <div class="field">
-            <label>Location</label>
-            <input
-              v-model="form.location"
-              type="text"
-              placeholder="City, Region"
-            />
-          </div>
-
-          <div class="grid">
-            <div class="field">
-              <label>Academic Year</label>
-              <input
-                v-model="form.academicYear"
-                type="text"
-                placeholder="2024/2025"
-              />
-            </div>
-
-            <div class="field">
-              <label>Tenant Code</label>
-              <input
-                v-model="form.tenantCode"
-                type="text"
-                disabled
-              />
-            </div>
-          </div>
-
-          <button
-            class="save-btn"
-            type="submit"
-            :disabled="loading"
+          <input
+            v-model="schoolForm.schoolName"
+            type="text"
           >
-            <span
-              v-if="loading"
-              class="spinner"
-            ></span>
-            {{ loading ? 'Saving changes...' : 'Save Changes' }}
-          </button>
-        </form>
+        </div>
+
+        <div class="field">
+          <label>School Motto</label>
+
+          <input
+            v-model="schoolForm.schoolMotto"
+            type="text"
+          >
+        </div>
+
+        <div class="field">
+          <label>School Location</label>
+
+          <input
+            v-model="schoolForm.location"
+            type="text"
+          >
+        </div>
+
+        <button
+  class="save-btn"
+  :disabled="loading"
+  @click="saveSchool"
+>
+  {{ loading ? 'Saving...' : 'Save School Changes' }}
+</button>
+
       </div>
 
+      <!-- PROFILE -->
+
+      <!-- <div class="settings-card">
+
+        <h2>My Profile</h2>
+
+        <div class="field">
+          <label>Full Name</label>
+
+          <input
+            v-model="profileForm.fullName"
+            type="text"
+          >
+        </div>
+
+        <div class="field">
+          <label>Phone Number</label>
+
+          <input
+            v-model="profileForm.phoneNumber"
+            type="text"
+          >
+        </div>
+
+        <button
+          class="save-btn"
+          @click="saveProfile"
+        >
+          Save Profile
+        </button>
+
+      </div> -->
+
+      <!-- SECURITY -->
+
+      <div class="settings-card">
+
+        <h2>Security</h2>
+
+        <div class="field">
+          <label>Admin PIN</label>
+
+          <div class="password-wrapper">
+
+  <input
+    v-model="securityForm.adminPin"
+    :type="showAdminPin ? 'text' : 'password'"
+  >
+
+  <i
+    class="pi"
+    :class="
+      showAdminPin
+        ? 'pi-eye-slash'
+        : 'pi-eye'
+    "
+    @click="showAdminPin = !showAdminPin"
+  />
+
+</div>
+        </div>
+
+        <div class="field">
+          <label>Confirm Admin PIN</label>
+
+         <div class="password-wrapper">
+
+  <input
+    v-model="securityForm.confirmAdminPin"
+    :type="showConfirmAdminPin ? 'text' : 'password'"
+  >
+
+  <i
+    class="pi"
+    :class="
+      showConfirmAdminPin
+        ? 'pi-eye-slash'
+        : 'pi-eye'
+    "
+    @click="
+      showConfirmAdminPin =
+      !showConfirmAdminPin
+    "
+  />
+
+</div>
+        </div>
+
+        <div class="field">
+          <label>Principal PIN</label>
+
+          <div class="password-wrapper">
+
+  <input
+    v-model="securityForm.principalPin"
+    :type="showPrincipalPin ? 'text' : 'password'"
+  >
+
+  <i
+    class="pi"
+    :class="
+      showPrincipalPin
+        ? 'pi-eye-slash'
+        : 'pi-eye'
+    "
+    @click="showPrincipalPin = !showPrincipalPin"
+  />
+
+</div>
+        </div>
+
+        <div class="field">
+          <label>Confirm Principal PIN</label>
+
+          <div class="password-wrapper">
+
+  <input
+    v-model="securityForm.confirmPrincipalPin"
+    :type="showConfirmPrincipalPin ? 'text' : 'password'"
+  >
+
+  <i
+    class="pi"
+    :class="
+      showConfirmPrincipalPin
+        ? 'pi-eye-slash'
+        : 'pi-eye'
+    "
+    @click="
+      showConfirmPrincipalPin =
+      !showConfirmPrincipalPin
+    "
+  />
+
+</div>
+        </div>
+
+        <button
+          class="save-btn"
+          @click="savePins"
+        >
+          Update PINs
+        </button>
+
+      </div>
+
+      <!-- ACCOUNT INFO -->
+
       <div class="settings-card side-card">
-        <h2>Workspace Info</h2>
+
+        <h2>Account Information</h2>
 
         <div class="info-list">
-          <div>
-            <span>Tenant Slug</span>
-            <strong>{{ workspace.tenantSlug || 'Not available' }}</strong>
-          </div>
 
           <div>
-            <span>Domain</span>
-            <strong>{{ workspace.defaultDomain || 'Not available' }}</strong>
+            <span>Tenant Code</span>
+            <strong>{{ workspace.tenantCode }}</strong>
           </div>
+
+          <!-- <div>
+            <span>School URL</span>
+            <strong>{{ workspace.domain }}</strong>
+          </div> -->
+
+          <div>
+            <span>Subscription</span>
+            <strong>{{ workspace.subscription }}</strong>
+          </div>
+
+          <!-- <div>
+            <span>Students</span>
+            <strong>{{ workspace.studentCount }}</strong>
+          </div> -->
 
           <div>
             <span>Status</span>
-            <strong>{{ workspace.tenantStatus || 'Active' }}</strong>
+            <strong>{{ workspace.status }}</strong>
           </div>
+
         </div>
+
       </div>
-    </section>
+
+    </div>
+
   </div>
 </template>
 
+
 <script setup>
+import { getSchoolProfile, updatePins, updateSchoolBranding } from '@/services/auth.js'
+import { useToast } from 'primevue/usetoast'
 import { computed, onMounted, reactive, ref } from 'vue'
+const toast = useToast()
+
 
 const loading = ref(false)
+
+const showAdminPin = ref(false)
+const showConfirmAdminPin = ref(false)
+
+const showPrincipalPin = ref(false)
+const showConfirmPrincipalPin = ref(false)
+
+
 const logoPreview = ref('')
 
-const form = reactive({
+const schoolForm = reactive({
   schoolName: '',
-  email: '',
-  phoneNumber: '',
+  schoolMotto: '',
   location: '',
-  academicYear: '',
-  tenantCode: '',
+})
+
+const loadSchoolProfile = async () => {
+
+  try {
+
+    const tenantCode =
+      localStorage.getItem('tenantCode')
+
+    if (!tenantCode) {
+      return
+    }
+
+    const response =
+  await getSchoolProfile(
+    tenantCode
+  )
+
+
+    const profile = response.data
+
+    schoolForm.schoolName =
+      profile.schoolName || ''
+
+    schoolForm.schoolMotto =
+      profile.schoolMotto || ''
+
+    schoolForm.location =
+      profile.location || ''
+
+    logoPreview.value =
+      profile.schoolLogoUrl || ''
+
+  } catch (error) {
+
+    console.error(
+      ' print Failed to load school profile:',
+      error
+    )
+  }
+}
+
+function showToast(severity, summary, detail) {
+  toast.add({
+    severity,
+    summary,
+    detail,
+    life: 4000,
+  })
+}
+
+
+
+const profileForm = reactive({
+  fullName: '',
+  phoneNumber: '',
+})
+
+const securityForm = reactive({
+  adminPin: '',
+  confirmAdminPin: '',
+
+  principalPin: '',
+  confirmPrincipalPin: '',
 })
 
 const workspace = reactive({
-  tenantSlug: '',
-  defaultDomain: '',
-  tenantStatus: '',
+  tenantCode: localStorage.getItem('tenantCode') || '',
+  domain: '',
+  subscription: 'Active',
+  studentCount: 0,
+  status: 'Active',
 })
 
 const schoolInitials = computed(() => {
-  if (!form.schoolName) return 'PH'
 
-  return form.schoolName
+  if (!schoolForm.schoolName) {
+    return 'PS'
+  }
+
+  return schoolForm.schoolName
     .split(' ')
     .filter(Boolean)
     .slice(0, 2)
-    .map((word) => word[0])
+    .map(word => word[0])
     .join('')
     .toUpperCase()
 })
 
-const loadFromStorage = () => {
+const loadData = () => {
+
   const rawUser = localStorage.getItem('user')
 
   if (!rawUser) return
 
-  try {
-    const user = JSON.parse(rawUser)
+  const user = JSON.parse(rawUser)
 
-    form.schoolName = user.schoolName || ''
-    form.email = user.email || ''
-    form.phoneNumber = user.phoneNumber || ''
-    form.location = user.location || ''
-    form.academicYear = user.academicYear || ''
-    form.tenantCode = user.tenantCode || localStorage.getItem('tenantCode') || ''
 
-    logoPreview.value = user.profilePictureUrl || ''
+  workspace.domain =
+    user.defaultDomain || ''
 
-    workspace.tenantSlug = user.tenantSlug || ''
-    workspace.defaultDomain = user.defaultDomain || ''
-    workspace.tenantStatus = user.tenantStatus || ''
-  } catch (error) {
-
-  }
+  workspace.studentCount =
+    user.studentCount || 0
 }
 
 const handleLogoUpload = (event) => {
+
   const file = event.target.files?.[0]
 
   if (!file) return
 
-  logoPreview.value = URL.createObjectURL(file)
+  logoPreview.value =
+    URL.createObjectURL(file)
 }
 
-const saveSettings = async () => {
-  loading.value = true
+const saveSchool = async () => {
+
+  const tenantCode =
+    localStorage.getItem('tenantCode')
+
+  if (!tenantCode) {
+
+    showToast(
+      'error',
+      'Error',
+      'Tenant code not found.'
+    )
+
+    return
+  }
+
+  if (!schoolForm.schoolName.trim()) {
+
+    showToast(
+      'warn',
+      'Validation',
+      'School name is required.'
+    )
+
+    return
+  }
 
   try {
-    const rawUser = localStorage.getItem('user')
-    const user = rawUser ? JSON.parse(rawUser) : {}
 
-    const updatedUser = {
-      ...user,
-      schoolName: form.schoolName,
-      email: form.email,
-      phoneNumber: form.phoneNumber,
-      location: form.location,
-      academicYear: form.academicYear,
+    loading.value = true
+
+    const payload = {
+      tenantCode,
+
+      schoolName:
+        schoolForm.schoolName.trim(),
+
+      schoolLogoUrl:
+        logoPreview.value || null,
+
+      schoolMotto:
+        schoolForm.schoolMotto.trim() || null,
+
+      location:
+        schoolForm.location.trim() || null,
     }
 
-    localStorage.setItem('user', JSON.stringify(updatedUser))
-    localStorage.setItem('schoolName', form.schoolName)
+    await updateSchoolBranding(
+      tenantCode,
+      payload
+    )
 
-    alert('Settings updated successfully.')
+    showToast(
+      'success',
+      'Success',
+      'School branding updated successfully.'
+    )
+
+    await loadSchoolProfile()
+
   } catch (error) {
 
-    alert('Unable to update settings.')
+    console.error(
+      'Failed to update school branding:',
+      error
+    )
+
+    showToast(
+      'error',
+      'Error',
+      error?.response?.data?.message ||
+      'Failed to update school branding.'
+    )
+
   } finally {
+
     loading.value = false
   }
 }
 
-onMounted(() => {
-  loadFromStorage()
+const saveProfile = async () => {
+
+
+}
+
+const savePins = async () => {
+
+  const adminPin =
+    securityForm.adminPin.trim()
+
+  const principalPin =
+    securityForm.principalPin.trim()
+
+  const hasAdminPin =
+    adminPin.length > 0
+
+  const hasPrincipalPin =
+    principalPin.length > 0
+
+  if (!hasAdminPin && !hasPrincipalPin) {
+
+    showToast(
+      'warn',
+      'Validation',
+      'Please update at least one PIN.'
+    )
+
+    return
+  }
+
+  if (
+    hasAdminPin &&
+    adminPin !== securityForm.confirmAdminPin.trim()
+  ) {
+
+    showToast(
+      'error',
+      'Error',
+      'Admin PINs do not match'
+    )
+
+    return
+  }
+
+  if (
+    hasPrincipalPin &&
+    principalPin !== securityForm.confirmPrincipalPin.trim()
+  ) {
+
+    showToast(
+      'error',
+      'Error',
+      'Principal PINs do not match'
+    )
+
+    return
+  }
+
+  try {
+
+    const payload = {
+      tenantCode:
+        localStorage.getItem('tenantCode') || '',
+    }
+
+    if (hasAdminPin) {
+      payload.adminPin = adminPin
+    }
+
+    if (hasPrincipalPin) {
+      payload.principalPin = principalPin
+    }
+
+    await updatePins(payload)
+
+    securityForm.adminPin = ''
+    securityForm.confirmAdminPin = ''
+
+    securityForm.principalPin = ''
+    securityForm.confirmPrincipalPin = ''
+
+    showToast(
+      'success',
+      'Success',
+      'PINs updated successfully'
+    )
+
+  } catch (error) {
+
+    console.error(error)
+
+    showToast(
+      'error',
+      'Error',
+      'Failed to update PINs'
+    )
+  }
+}
+
+onMounted(async () => {
+
+  loadData()
+
+  await loadSchoolProfile()
+
 })
 </script>
+
 
 <style scoped>
 .settings-page {
@@ -238,87 +606,76 @@ onMounted(() => {
   gap: 24px;
 }
 
-.settings-hero {
+.hero-card {
   padding: 32px;
   border-radius: 28px;
-  color: #ffffff;
+  color: #fff;
   background:
-    radial-gradient(circle at top left, rgba(251, 191, 36, 0.25), transparent 30%),
-    linear-gradient(135deg, #071926, #0f2742);
+    radial-gradient(
+      circle at top left,
+      rgba(251, 191, 36, 0.25),
+      transparent 35%
+    ),
+    linear-gradient(
+      135deg,
+      #071926,
+      #0f2742
+    );
 }
 
-.badge {
-  display: inline-flex;
-  margin-bottom: 12px;
-  padding: 7px 12px;
-  border-radius: 999px;
-  color: #071926;
-  background: #f5d58c;
-  font-size: 12px;
-  font-weight: 900;
-  text-transform: uppercase;
-}
-
-.settings-hero h1 {
+.hero-card h1 {
   margin: 0;
-  font-size: 38px;
-  letter-spacing: -0.04em;
+  color: papayawhip;
+  font-size: 36px;
 }
 
-.settings-hero p {
-  max-width: 620px;
-  margin: 12px 0 0;
-  color: rgba(255, 255, 255, 0.76);
-  line-height: 1.7;
+.hero-card p {
+  margin-top: 12px;
+  color: rgba(255,255,255,.8);
 }
 
-.settings-grid {
+.settings-layout {
   display: grid;
-  grid-template-columns: minmax(0, 1.4fr) minmax(300px, 0.6fr);
+  grid-template-columns:
+    minmax(0,1fr)
+    minmax(0,1fr)
+    320px;
   gap: 24px;
 }
 
 .settings-card {
-  padding: 28px;
-  border-radius: 26px;
-  background: #ffffff;
-  box-shadow: 0 24px 70px rgba(15, 23, 42, 0.08);
+  padding: 24px;
+  border-radius: 22px;
+  background: white;
+  box-shadow:
+    0 12px 40px rgba(15,23,42,.08);
 }
 
-.card-header h2,
-.side-card h2 {
-  margin: 0;
-  color: #111827;
-}
-
-.card-header p {
-  margin: 8px 0 0;
-  color: #6b7280;
-}
-
-.settings-form {
-  display: grid;
-  gap: 18px;
-  margin-top: 24px;
+.settings-card h2 {
+  margin: 0 0 20px;
 }
 
 .logo-section {
   display: flex;
+  gap: 18px;
   align-items: center;
-  gap: 16px;
+  margin-bottom: 24px;
 }
 
 .logo-preview {
-  width: 78px;
-  height: 78px;
-  display: grid;
-  place-items: center;
+  width: 110px;
+  height: 110px;
   overflow: hidden;
-  border-radius: 24px;
-  color: #071926;
-  background: linear-gradient(135deg, #f5d58c, #c99635);
-  font-size: 26px;
-  font-weight: 950;
+  border-radius: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background:
+    linear-gradient(
+      135deg,
+      #f5d58c,
+      #c99635
+    );
 }
 
 .logo-preview img {
@@ -327,16 +684,20 @@ onMounted(() => {
   object-fit: cover;
 }
 
+.logo-initials {
+  font-size: 32px;
+  font-weight: 900;
+  color: #071926;
+}
+
 .upload-btn {
   display: inline-flex;
   align-items: center;
-  height: 42px;
-  padding: 0 16px;
+  height: 44px;
+  padding: 0 18px;
   border-radius: 14px;
-  color: #071926;
   background: #f5d58c;
-  font-size: 13px;
-  font-weight: 900;
+  font-weight: 700;
   cursor: pointer;
 }
 
@@ -344,108 +705,121 @@ onMounted(() => {
   display: none;
 }
 
-.grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 16px;
-}
-
 .field {
   display: grid;
   gap: 8px;
+  margin-bottom: 18px;
 }
 
 .field label {
-  color: #374151;
   font-size: 13px;
-  font-weight: 800;
+  font-weight: 700;
+  color: #374151;
 }
 
 .field input {
   width: 100%;
-  height: 48px;
-  border: 1px solid #e5e7eb;
-  border-radius: 14px;
+  height: 50px;
   padding: 0 14px;
+  border-radius: 14px;
+  border: 1px solid #e5e7eb;
   outline: none;
 }
 
 .field input:focus {
   border-color: #c99635;
-  box-shadow: 0 0 0 4px rgba(201, 150, 53, 0.12);
-}
-
-.field input:disabled {
-  color: #6b7280;
-  background: #f9fafb;
+  box-shadow:
+    0 0 0 4px rgba(201,150,53,.12);
 }
 
 .save-btn {
+  width: 100%;
   height: 52px;
   border: none;
-  border-radius: 16px;
-  color: #071926;
-  background: linear-gradient(135deg, #f5d58c, #c99635);
-  font-weight: 950;
+  border-radius: 14px;
   cursor: pointer;
-}
-
-.save-btn:disabled {
-  opacity: 0.7;
-  cursor: not-allowed;
-}
-
-.spinner {
-  width: 15px;
-  height: 15px;
-  display: inline-block;
-  margin-right: 8px;
-  border: 2px solid rgba(7, 25, 38, 0.3);
-  border-top-color: #071926;
-  border-radius: 50%;
-  animation: spin 0.7s linear infinite;
-  vertical-align: middle;
+  font-weight: 800;
+  color: #071926;
+  background:
+    linear-gradient(
+      135deg,
+      #f5d58c,
+      #c99635
+    );
 }
 
 .info-list {
   display: grid;
-  gap: 16px;
-  margin-top: 22px;
+  gap: 14px;
 }
 
 .info-list div {
-  display: grid;
-  gap: 6px;
   padding: 16px;
-  border-radius: 18px;
+  border-radius: 14px;
   background: #f9fafb;
 }
 
 .info-list span {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 11px;
   color: #6b7280;
-  font-size: 12px;
-  font-weight: 800;
   text-transform: uppercase;
+  font-weight: 800;
 }
 
 .info-list strong {
   color: #111827;
-  word-break: break-all;
 }
 
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
+.side-card {
+  align-self: start;
+  position: sticky;
+  top: 20px;
 }
 
-@media (max-width: 900px) {
-  .settings-grid {
+@media (max-width: 1200px) {
+
+  .settings-layout {
     grid-template-columns: 1fr;
   }
 
-  .grid {
-    grid-template-columns: 1fr;
+  .side-card {
+    position: static;
   }
 }
+
+@media (max-width: 768px) {
+
+  .hero-card {
+    padding: 24px;
+  }
+
+  .hero-card h1 {
+    font-size: 28px;
+  }
+
+  .password-wrapper {
+  position: relative;
+}
+
+.password-wrapper input {
+  padding-right: 46px;
+}
+
+.password-wrapper .pi {
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  color: #6b7280;
+}
+
+  .logo-section {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
 </style>
