@@ -406,7 +406,8 @@ async function loadAccounts() {
     accounts.value = response?.data ?? response ?? []
 
   } catch (err) {
-    console.error(err)
+
+
 
     error.value =
       err?.response?.data?.message ||
@@ -518,22 +519,19 @@ function toggleMenu(id) {
 function viewAccount(account) {
   openMenu.value = null
 
-  // Replace with your router navigation
-  console.log('View account:', account)
+
 }
 
 function verifyAccount(account) {
   openMenu.value = null
 
-  // Replace with your verification API call
-  console.log('Verify account:', account)
 }
 
 function rejectAccount(account) {
   openMenu.value = null
 
   // Replace with your rejection API call
-  console.log('Reject account:', account)
+
 }
 
 /*
