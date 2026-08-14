@@ -29,8 +29,8 @@ function closeMobileMenu() {
   <header class="topbar">
     <!-- LEFT: LOGO -->
     <div class="brand">
-      <img src="/logo.png" alt="Logo" class="logo" />
-      <span class="brand-name">Phena SMS</span>
+      <!-- <img src="/public/favicon.svg" alt="Logo" class="logo" /> -->
+      <span class="brand-name">Phena School Manager</span>
     </div>
 
     <!-- DESKTOP: NAV -->

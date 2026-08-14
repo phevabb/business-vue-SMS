@@ -36,15 +36,27 @@
             </span>
           </div>
 
-          <label class="upload-btn">
-            Update Logo
+          <label
+  class="upload-btn"
+  :class="{ disabled: logoUploading }"
+>
+  <span
+    v-if="logoUploading"
+    class="upload-spinner"
+  ></span>
 
-            <input
-              type="file"
-              accept="image/png,image/jpeg,image/webp"
-              @change="handleLogoUpload"
-            >
-          </label>
+  <span>
+    {{ logoUploading ? 'Uploading...' : 'Update Logo' }}
+  </span>
+
+  <input
+    type="file"
+    accept="image/png,image/jpeg,image/webp"
+    :disabled="logoUploading"
+    @change="handleLogoUpload"
+  >
+</label>
+
 
         </div>
 
@@ -77,10 +89,16 @@
 
         <button
   class="save-btn"
-  :disabled="loading"
+  :disabled="loading || logoUploading"
   @click="saveSchool"
 >
-  {{ loading ? 'Saving...' : 'Save School Changes' }}
+  {{
+    loading
+      ? 'Saving...'
+      : logoUploading
+        ? 'Please wait...'
+        : 'Save School Changes'
+  }}
 </button>
 
       </div>
@@ -275,7 +293,7 @@
 
 
 <script setup>
-import { getSchoolProfile, updatePins, updateSchoolBranding } from '@/services/auth.js'
+import { getSchoolProfile, updatePins, updateSchoolBranding, uploadSchoolLogo } from '@/services/auth.js'
 import { useToast } from 'primevue/usetoast'
 import { computed, onMounted, reactive, ref } from 'vue'
 const toast = useToast()
@@ -291,6 +309,10 @@ const showConfirmPrincipalPin = ref(false)
 
 
 const logoPreview = ref('')
+
+const selectedLogoFile = ref(null)
+const logoUploading = ref(false)
+
 
 const schoolForm = reactive({
   schoolName: '',
@@ -331,9 +353,13 @@ const loadSchoolProfile = async () => {
 
   } catch (error) {
 
-    console.error(
-      ' print Failed to load school profile:',
-      error
+
+
+    showToast(
+      'error',
+      'Error',
+      error?.response?.data?.message ||
+      'Failed to load school profile.'
     )
   }
 }
@@ -401,15 +427,78 @@ const loadData = () => {
     user.studentCount || 0
 }
 
-const handleLogoUpload = (event) => {
+const handleLogoUpload = async (event) => {
 
-  const file = event.target.files?.[0]
+  const file =
+    event.target.files?.[0]
 
-  if (!file) return
+  if (!file) {
+    return
+  }
 
-  logoPreview.value =
-    URL.createObjectURL(file)
+  const tenantCode =
+    localStorage.getItem('tenantCode')
+
+  if (!tenantCode) {
+
+    showToast(
+      'error',
+      'Error',
+      'Tenant code not found.'
+    )
+
+    event.target.value = ''
+
+    return
+  }
+
+  try {
+
+    logoUploading.value = true
+
+    const localPreviewUrl =
+      URL.createObjectURL(file)
+
+    logoPreview.value =
+      localPreviewUrl
+
+    const response =
+      await uploadSchoolLogo(
+        tenantCode,
+        file
+      )
+
+    logoPreview.value =
+      response.data.schoolLogoUrl
+
+    showToast(
+      'success',
+      'Success',
+      'School logo uploaded successfully.'
+    )
+
+  } catch (error) {
+
+
+
+    showToast(
+      'error',
+      'Error',
+      error?.response?.data?.message ||
+      error?.response?.data?.error ||
+      'Failed to upload logo.'
+    )
+
+    await loadSchoolProfile()
+
+  } finally {
+
+    logoUploading.value = false
+
+    event.target.value = ''
+  }
 }
+
 
 const saveSchool = async () => {
 
@@ -442,22 +531,18 @@ const saveSchool = async () => {
 
     loading.value = true
 
-    const payload = {
-      tenantCode,
+const payload = {
+  tenantCode,
 
-      schoolName:
-        schoolForm.schoolName.trim(),
+  schoolName:
+    schoolForm.schoolName.trim(),
 
-      schoolLogoUrl:
-        logoPreview.value || null,
+  schoolMotto:
+    schoolForm.schoolMotto.trim() || null,
 
-      schoolMotto:
-        schoolForm.schoolMotto.trim() || null,
-
-      location:
-        schoolForm.location.trim() || null,
-    }
-
+  location:
+    schoolForm.location.trim() || null,
+}
     await updateSchoolBranding(
       tenantCode,
       payload
@@ -473,10 +558,6 @@ const saveSchool = async () => {
 
   } catch (error) {
 
-    console.error(
-      'Failed to update school branding:',
-      error
-    )
 
     showToast(
       'error',
@@ -580,7 +661,6 @@ const savePins = async () => {
 
   } catch (error) {
 
-    console.error(error)
 
     showToast(
       'error',
@@ -605,6 +685,45 @@ onMounted(async () => {
   display: grid;
   gap: 24px;
 }
+
+.upload-btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+}
+
+.upload-btn.disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.upload-btn input {
+  display: none;
+}
+
+.upload-spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.45);
+  border-top-color: #ffffff;
+  border-radius: 50%;
+  animation: upload-spin 0.8s linear infinite;
+}
+
+@keyframes upload-spin {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 
 .hero-card {
   padding: 32px;

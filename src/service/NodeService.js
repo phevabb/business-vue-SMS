@@ -351,7 +351,7 @@ export const NodeService = {
                     {
                         key: '6-1',
                         data: {
-                            name: 'logo.png',
+                            name: 'logo.jpg',
                             size: '2kb',
                             type: 'Picture'
                         }

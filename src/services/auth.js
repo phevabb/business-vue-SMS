@@ -60,6 +60,33 @@ export const updateSchoolBranding = (tenantCode, payload) => {
 }
 
 
+
+export const uploadSchoolLogo = (
+    tenantCode,
+    file
+) => {
+
+    const formData = new FormData()
+
+    formData.append(
+        'file',
+        file
+    )
+
+    return api.post(
+        `/api/accounts/upload-school-logo/${tenantCode}`,
+        formData,
+        {
+            headers: {
+                'X-Tenant-Code': tenantCode,
+                'Content-Type': 'multipart/form-data',
+            },
+        }
+    )
+}
+
+
+
 export const getSchoolProfile = (tenantCode) => {
   return api.get(`/api/accounts/school-profile/${tenantCode}`, {
     headers: {
