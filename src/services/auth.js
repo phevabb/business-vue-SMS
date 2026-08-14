@@ -60,6 +60,11 @@ export const updateSchoolBranding = (tenantCode, payload) => {
 }
 
 
+export const getPendingAccounts = () => {
+  return api.get(`/api/accounts/pending-accounts`, {
+
+  })
+}
 
 export const uploadSchoolLogo = (
     tenantCode,

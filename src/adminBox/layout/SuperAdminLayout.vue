@@ -127,6 +127,11 @@ const menuItems = [
     icon: '📅',
   },
   {
+    label: 'Pending Verification',
+    to: '/superadmin/pending-verification',
+    icon: '✅',
+  },
+  {
     label: 'Transactions',
     to: '/superadmin/transactions',
     icon: '💳',

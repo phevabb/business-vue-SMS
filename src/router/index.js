@@ -71,6 +71,12 @@ const routes = [
       component: () => import('@/adminBox/views/superadmin/SuperAdminAddYearCalendar.vue'),
     },
 
+    {
+      path: 'pending-verification',
+      name: 'superadmin-pending-verification',
+      component: () => import('@/adminBox/views/superadmin/SuperAdminPendingVerification.vue'),
+    },
+
     // Billing list: shows all schools
     {
       path: 'billing-list',
