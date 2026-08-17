@@ -488,10 +488,7 @@ const loadSenderIds = async () => {
     const response =
       await getAllSenderIds()
 
-      console.log(
-        'Loaded sender IDs: print',
-        response
-        )
+
 
     senderIds.value =
       response || []

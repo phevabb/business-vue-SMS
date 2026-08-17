@@ -870,17 +870,13 @@ const verifyWalletPayment = async (
   }
 
   try {
-    console.log(" print reference and tenantcode for verification:", reference, tenantCode)
 
     const response =
       await verifyWalletTopUpPayment({
         tenantCode,
         reference,
       })
-      console.log(
-        'Wallet payment verification response: print',
-        response
-      )
+
 
     if (response.data?.success) {
 
@@ -1077,10 +1073,7 @@ const loadLatestSenderId = async () => {
         tenantCode
       )
 
-      console.log(
-        'Latest Sender ID response print:',
-        response
-      )
+
 
     const data =
       response.data
@@ -1327,10 +1320,7 @@ const loadClientSmsWallet = async () => {
         tenantCode
       )
 
-    console.log(
-      'Client SMS wallet response print:',
-      response.data
-    )
+
 
     walletBalance.value =
       Number(response.data?.cashBalance || 0)
@@ -1432,10 +1422,7 @@ const submitSenderIdRequest = async () => {
   )
 
 
-      console.log(
-        'Sender ID request response print:',
-        response
-      )
+
 
     senderId.id =
       response.data.id
@@ -1476,12 +1463,9 @@ const submitSenderIdRequest = async () => {
 
 
   } catch (error) {
-    console.log('Error response print:', error)
 
-    console.error(
-      'Failed to request sender ID:',
-      error
-    )
+
+
 
     showToast(
       'error',
