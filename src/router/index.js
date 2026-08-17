@@ -70,6 +70,17 @@ const routes = [
       name: 'superadmin-add-year-calendar',
       component: () => import('@/adminBox/views/superadmin/SuperAdminAddYearCalendar.vue'),
     },
+    {
+      path: 'sms-sender-id',
+      name: 'superadmin-sms-sender-id',
+      component: () => import('@/adminBox/views/superadmin/SuperAdminSMSSenderID.vue'),
+    },
+
+    {
+      path: 'sms-wallets-transactions',
+      name: 'superadmin-sms-wallets-transactions',
+      component: () => import('@/adminBox/views/superadmin/SuperAdminSMSWalletsTransactions.vue'),
+    },
 
     {
       path: 'pending-verification',

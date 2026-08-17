@@ -132,7 +132,17 @@ const menuItems = [
     icon: '✅',
   },
   {
-    label: 'Transactions',
+    label: 'SMS Sender ID',
+    to: '/superadmin/sms-sender-id',
+    icon: '📨',
+  },
+   {
+    label: 'SMS Wallets & Transactions',
+    to: '/superadmin/sms-wallets-transactions',
+    icon: '💰',
+  },
+  {
+    label: 'Payments',
     to: '/superadmin/transactions',
     icon: '💳',
   },

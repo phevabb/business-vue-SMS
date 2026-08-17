@@ -99,6 +99,46 @@ export function updateSuperAdminAccountActive(accountId, isActive) {
 
 
 
+    export async function getAllSenderIds() {
+  const response = await api.get('/api/sms/sender-id/all')
+  return response.data
+}
+
+
+
+
+
+
+
+
+
+export async function approveSenderId(senderId) {
+  const response = await api.put(`/api/sms/sender-id/${senderId}/approve`)
+  return response.data
+}
+
+export async function rejectSenderId(senderId) {
+  const response = await api.post(`/api/sms/sender-id/${senderId}/reject`)
+  return response.data
+}
+
+export async function deleteSenderId(senderId) {
+  const response = await api.delete(`/api/sms/sender-ids/${senderId}`)
+  return response.data
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 /**
@@ -221,6 +261,37 @@ export function getSuperAdminAuditLogs(params = {}) {
     params,
   })
 }
+
+export function getSmsWallets() {
+  return api.get(
+    '/api/sms/admin/wallets'
+  )
+}
+
+
+export function getSmsWalletByTenantCode(
+  tenantCode
+) {
+  return api.get(
+    `/api/sms/admin/wallets/${tenantCode}`
+  )
+}
+
+export function getSmsWalletTransactions() {
+  return api.get(
+    '/api/sms/admin/wallet-transactions'
+  )
+}
+
+
+export function getSmsWalletTransactionsByTenantCode(
+  tenantCode
+) {
+  return api.get(
+    `/api/sms/admin/wallet-transactions/${tenantCode}`
+  )
+}
+
 
 export function createAcademicYearCalendar(payload) {
   return api.post('/api/billing/academic-years', payload)

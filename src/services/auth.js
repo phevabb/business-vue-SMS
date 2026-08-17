@@ -91,6 +91,81 @@ export const uploadSchoolLogo = (
 }
 
 
+export function createWalletTopUpTransaction(
+  payload
+) {
+  return api.post(
+    '/api/sms/wallet/top-up/create',
+    payload,
+    {
+      headers: {
+        'X-Tenant-Code': payload.tenantCode,
+      },
+    }
+  )
+}
+
+
+export function purchaseSmsCredits(
+  payload
+) {
+  return api.post(
+    '/api/sms/wallet/purchase-sms',
+    payload,
+    {
+      headers: {
+        'X-Tenant-Code': payload.tenantCode,
+      },
+    }
+  )
+}
+
+
+
+
+export function getClientSmsWallet(
+  tenantCode
+) {
+  return api.get(
+    `/api/sms/wallet/${tenantCode}`,
+    {
+      headers: {
+        'X-Tenant-Code': tenantCode,
+      },
+    }
+  )
+}
+
+
+export function verifyWalletTopUpPayment(
+  payload
+) {
+  return api.post(
+    '/api/sms/wallet/top-up/verify',
+    payload,
+    {
+      headers: {
+        'X-Tenant-Code': payload.tenantCode,
+      },
+    }
+  )
+}
+
+
+
+export function getAccountEmailByTenantCode(
+  tenantCode
+) {
+  return api.get(
+    `/api/accounts/email/${tenantCode}`,
+    {
+      headers: {
+        'X-Tenant-Code': tenantCode,
+      },
+    }
+  )
+}
+
 
 export const getSchoolProfile = (tenantCode) => {
   return api.get(`/api/accounts/school-profile/${tenantCode}`, {
@@ -120,6 +195,129 @@ export function changePassword(payload) {
 }
 
 
+const handleDeleteSenderId = async () => {
+
+  const tenantCode =
+    localStorage.getItem('tenantCode') || ''
+
+  if (!tenantCode) {
+
+    showToast(
+      'error',
+      'Missing Tenant',
+      'Tenant code not found.'
+    )
+
+    return
+  }
+
+  if (!senderId.id) {
+
+    showToast(
+      'warn',
+      'No Sender ID',
+      'No sender ID request is available to delete.'
+    )
+
+    return
+  }
+
+  const confirmDelete =
+    window.confirm(
+      'Are you sure you want to delete this sender ID request?'
+    )
+
+  if (!confirmDelete) {
+    return
+  }
+
+  try {
+
+    await deleteSenderId(
+      tenantCode,
+      senderId.id
+    )
+
+    senderId.id = null
+    senderId.activeSenderId = ''
+    senderId.status = 'Not requested'
+    senderId.reason = ''
+    senderId.rejectionReason = ''
+    senderId.available = false
+
+    smsForm.senderId = ''
+
+    smsHistory.value.unshift({
+      id: Date.now(),
+      date: new Date().toISOString().slice(0, 10),
+      type: 'Sender ID',
+      description: 'Sender ID request deleted',
+      credits: '-',
+      status: 'Completed',
+    })
+
+    showToast(
+      'success',
+      'Deleted',
+      'Sender ID request deleted successfully.'
+    )
+
+    await loadLatestSenderId()
+
+  } catch (error) {
+
+    console.error(
+      'Failed to delete sender ID:',
+      error
+    )
+
+    showToast(
+      'error',
+      'Delete Failed',
+      error?.response?.data?.message ||
+        'Unable to delete sender ID request.'
+    )
+  }
+}
+
+
+
+
+
+export function deleteSenderId(
+  tenantCode,
+  senderId
+) {
+  return api.delete(
+    `/api/sms/sender-id/${senderId}`,
+    {
+      headers: {
+        'X-Tenant-Code': tenantCode,
+      },
+    }
+  )
+}
+
+
+export function requestSenderId(tenantCode, payload) {
+  return api.post(
+    '/api/sms/sender-id/request',
+    payload,
+    {
+      headers: {
+        'X-Tenant-Code': tenantCode,
+      },
+    }
+  )
+}
+
+export function getLatestSenderId(tenantCode) {
+  return api.get(`/api/sms/sender-id/latest/${tenantCode}`, {
+    headers: {
+        'X-Tenant-Code': tenantCode,
+    },
+  })
+}
 
 export function updatePins(payload) {
   return api.put('/api/accounts/update-pins', payload)

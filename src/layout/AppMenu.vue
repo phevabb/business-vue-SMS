@@ -46,11 +46,18 @@ const model = ref([
       //   icon: 'pi pi-fw pi-globe',
       //   to: '/domain',
       // },
-      // {
-      //   label: 'SMS',
-      //   icon: 'pi pi-fw pi-comments',
-      //   to: '/sms',
-      // },
+
+
+
+    //   {
+    //     label: 'SMS',
+    //     icon: 'pi pi-fw pi-comments', //fontt
+    //     to: '/sms',
+    //   },
+
+
+
+
       // {
       //   label: 'Billing Summary',
       //   icon: 'pi pi-fw pi-dollar',

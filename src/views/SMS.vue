@@ -1,609 +1,2541 @@
-<script setup>
-import { computed } from 'vue'
 
-const props = defineProps({
-    creditsLeft: {
-        type: Number,
-        default: 2480
-    },
-    creditsUsed: {
-        type: Number,
-        default: 2520
-    },
-    totalCredits: {
-        type: Number,
-        default: 5000
-    },
-    senderName: {
-        type: String,
-        default: 'PHENADEMO'
-    },
-    defaultSmsType: {
-        type: String,
-        default: 'Fee Reminders'
-    },
-    lowBalanceAlert: {
-        type: Number,
-        default: 500
-    },
-    lastTopUp: {
-        type: String,
-        default: '12 Apr 2026'
-    }
-})
-
-const usagePercent = computed(() => {
-    if (!props.totalCredits) return 0
-    return Math.min((props.creditsUsed / props.totalCredits) * 100, 100)
-})
-
-const remainingPercent = computed(() => {
-    if (!props.totalCredits) return 0
-    return Math.min((props.creditsLeft / props.totalCredits) * 100, 100)
-})
-
-const formattedCreditsLeft = computed(() =>
-    new Intl.NumberFormat('en-GH').format(props.creditsLeft)
-)
-
-const formattedCreditsUsed = computed(() =>
-    new Intl.NumberFormat('en-GH').format(props.creditsUsed)
-)
-
-const formattedTotalCredits = computed(() =>
-    new Intl.NumberFormat('en-GH').format(props.totalCredits)
-)
-
-const formattedLowBalance = computed(() =>
-    new Intl.NumberFormat('en-GH').format(props.lowBalanceAlert)
-)
-
-const balanceState = computed(() => {
-    if (props.creditsLeft <= props.lowBalanceAlert) return 'low'
-    if (props.creditsLeft <= props.totalCredits * 0.35) return 'warning'
-    return 'healthy'
-})
-
-const balanceBadgeClass = computed(() => {
-    switch (balanceState.value) {
-        case 'low':
-            return 'bg-red-50 text-red-700 border border-red-200'
-        case 'warning':
-            return 'bg-amber-50 text-amber-700 border border-amber-200'
-        default:
-            return 'bg-emerald-50 text-emerald-700 border border-emerald-200'
-    }
-})
-
-const balanceLabel = computed(() => {
-    switch (balanceState.value) {
-        case 'low':
-            return 'Low Balance'
-        case 'warning':
-            return 'Monitor Balance'
-        default:
-            return 'Healthy Balance'
-    }
-})
-</script>
 
 <template>
-    <section class="sms-card">
-        <!-- Header -->
-        <div class="card-header">
-            <div>
-                <p class="eyebrow">SMS &amp; Branding</p>
-                <h2 class="card-title">Messaging</h2>
-                <p class="card-subtitle">
-                    Manage SMS credits, sender identity, reminders, and alert thresholds from one place.
-                </p>
-            </div>
+  <div class="sms-page">
 
-            <div class="header-badges">
-                <span class="badge badge-soft-blue">
-                    Messaging
-                </span>
-                <span class="badge" :class="balanceBadgeClass">
-                    {{ balanceLabel }}
-                </span>
-            </div>
-        </div>
+    <!-- HERO -->
+    <section class="sms-hero">
+      <div>
+        <span class="sms-badge">
+          Phena SMS Center
+        </span>
 
-        <!-- Hero section -->
-        <div class="hero-panel">
-            <div class="hero-left">
-                <p class="hero-label">SMS credits left</p>
-                <div class="hero-value">
-                    {{ formattedCreditsLeft }}
-                </div>
-                <p class="hero-note">
-                    <strong>{{ formattedCreditsUsed }}</strong> used out of
-                    <strong>{{ formattedTotalCredits }}</strong> total credits
-                </p>
-            </div>
+        <h1>SMS Wallet & Messaging</h1>
 
-            <div class="hero-right">
-                <div class="mini-summary">
-                    <span class="mini-label">Low Balance Alert</span>
-                    <span class="mini-value">{{ formattedLowBalance }} credits</span>
-                </div>
-            </div>
-        </div>
+        <p>
+          Buy SMS credits, request sender IDs, send messages to parents,
+          and track your school's communication history from one place.
+        </p>
+      </div>
 
-        <!-- Usage progress -->
-        <div class="usage-card">
-            <div class="usage-top">
-                <span class="usage-label">Credit usage</span>
-                <span class="usage-meta">{{ Math.round(usagePercent) }}% used</span>
-            </div>
+      <div class="hero-balance-card">
+        <span>Available SMS Credits</span>
 
-            <div class="progress-track">
-                <div class="progress-used" :style="{ width: usagePercent + '%' }"></div>
-            </div>
+        <strong>
+          {{ smsWallet.balance.toLocaleString() }}
+        </strong>
 
-            <div class="usage-legend">
-                <div class="legend-item">
-                    <span class="legend-dot dot-blue"></span>
-                    <span>{{ formattedCreditsUsed }} used</span>
-                </div>
-                <div class="legend-item">
-                    <span class="legend-dot dot-emerald"></span>
-                    <span>{{ formattedCreditsLeft }} left</span>
-                </div>
-                <div class="legend-item">
-                    <span class="legend-dot dot-slate"></span>
-                    <span>{{ formattedTotalCredits }} total</span>
-                </div>
-            </div>
-        </div>
-
-        <!-- Details -->
-        <div class="details-grid">
-            <div class="detail-item">
-                <div class="detail-icon icon-indigo">
-                    <svg viewBox="0 0 24 24" fill="none" class="h-5 w-5" stroke="currentColor" stroke-width="1.8">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25H4.5a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5H4.5A2.25 2.25 0 002.25 6.75m19.5 0v.243a2.25 2.25 0 01-1.07 1.917l-7.5 4.615a2.25 2.25 0 01-2.36 0l-7.5-4.615A2.25 2.25 0 012.25 6.993V6.75" />
-                    </svg>
-                </div>
-                <div>
-                    <p class="detail-label">Sender Name</p>
-                    <p class="detail-value">{{ senderName }}</p>
-                </div>
-            </div>
-
-            <div class="detail-item">
-                <div class="detail-icon icon-blue">
-                    <svg viewBox="0 0 24 24" fill="none" class="h-5 w-5" stroke="currentColor" stroke-width="1.8">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M10.34 3.94c.09-.55.57-.94 1.12-.94h1.08c.55 0 1.03.39 1.12.94l.12.77c.06.36.3.66.63.82.21.1.42.2.62.32.31.18.69.2 1.02.04l.7-.34c.5-.24 1.1-.11 1.45.32l.76.92c.35.43.37 1.04.05 1.49l-.45.63c-.21.29-.26.67-.13 1 .08.22.15.45.2.68.08.35.33.64.67.77l.74.28c.53.2.84.73.76 1.28l-.14 1.18c-.07.54-.5.97-1.04 1.03l-.78.09a1.2 1.2 0 00-.87.5c-.14.2-.29.39-.45.57-.23.27-.33.63-.25.98l.16.75c.12.54-.13 1.1-.61 1.37l-1.03.58c-.48.27-1.08.18-1.46-.21l-.53-.56a1.2 1.2 0 00-.95-.37c-.25.02-.5.02-.75 0a1.2 1.2 0 00-.95.37l-.53.56c-.38.39-.98.48-1.46.21l-1.03-.58a1.13 1.13 0 01-.61-1.37l.16-.75c.08-.35-.02-.71-.25-.98-.16-.18-.31-.37-.45-.57a1.2 1.2 0 00-.87-.5l-.78-.09c-.54-.06-.97-.49-1.04-1.03l-.14-1.18c-.08-.55.23-1.08.76-1.28l.74-.28c.34-.13.59-.42.67-.77.05-.23.12-.46.2-.68.13-.33.08-.71-.13-1l-.45-.63a1.13 1.13 0 01.05-1.49l.76-.92c.35-.43.95-.56 1.45-.32l.7.34c.33.16.71.14 1.02-.04.2-.12.41-.22.62-.32.33-.16.57-.46.63-.82l.12-.77z" />
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 15.75A3.75 3.75 0 1012 8.25a3.75 3.75 0 000 7.5z" />
-                    </svg>
-                </div>
-                <div>
-                    <p class="detail-label">Default SMS Type</p>
-                    <p class="detail-value">{{ defaultSmsType }}</p>
-                </div>
-            </div>
-
-            <div class="detail-item">
-                <div class="detail-icon icon-amber">
-                    <svg viewBox="0 0 24 24" fill="none" class="h-5 w-5" stroke="currentColor" stroke-width="1.8">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v4.5m0 3.75h.008v.008H12v-.008z" />
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M10.29 3.86L1.82 18a2.25 2.25 0 001.93 3.37h16.5A2.25 2.25 0 0022.18 18L13.71 3.86a2.25 2.25 0 00-3.42 0z" />
-                    </svg>
-                </div>
-                <div>
-                    <p class="detail-label">Low Balance Alert</p>
-                    <p class="detail-value">{{ formattedLowBalance }} credits</p>
-                </div>
-            </div>
-
-            <div class="detail-item">
-                <div class="detail-icon icon-sky">
-                    <svg viewBox="0 0 24 24" fill="none" class="h-5 w-5" stroke="currentColor" stroke-width="1.8">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10m-13 9h16a2 2 0 002-2V7a2 2 0 00-2-2H4a2 2 0 00-2 2v11a2 2 0 002 2z" />
-                    </svg>
-                </div>
-                <div>
-                    <p class="detail-label">Last Top-up</p>
-                    <p class="detail-value">{{ lastTopUp }}</p>
-                </div>
-            </div>
-        </div>
-
-        <!-- Footer -->
-        <div class="card-footer">
-            <div class="footer-info">
-                <p class="footer-title">SMS settings and credit control</p>
-                <p class="footer-text">
-                    Keep messaging ready for school communication, fee reminders, alerts, and branded sender delivery.
-                </p>
-            </div>
-
-            <div class="footer-actions">
-                <button class="btn btn-secondary" type="button">
-                    Save Settings
-                </button>
-                <button class="btn btn-primary" type="button">
-                    Buy SMS
-                </button>
-            </div>
-        </div>
+        <small>
+          1 credit = 1 SMS segment
+        </small>
+      </div>
     </section>
+
+    <!-- TOP SUMMARY -->
+    <section class="summary-grid">
+
+      <div class="summary-card sender-summary-card">
+        <span>Sender ID</span>
+
+        <strong>
+          {{ senderId.activeSenderId || 'Not requested' }}
+        </strong>
+
+        <small>
+          {{ senderId.status }}
+        </small>
+
+        <button
+          v-if="senderId.id"
+          class="delete-sender-btn"
+          type="button"
+          @click="openDeleteSenderModal"
+        >
+          Delete Sender ID
+        </button>
+      </div>
+
+      <div class="summary-card wallet-summary-card">
+  <span>Wallet Balance</span>
+
+  <strong>
+    GHS {{ walletBalance.toFixed(2) }}
+  </strong>
+
+  <small>Cash</small>
+
+  <button
+    class="load-wallet-btn"
+    type="button"
+    @click="openLoadWalletModal"
+  >
+    Load Wallet
+  </button>
+</div>
+
+      <div class="summary-card">
+        <span>Sms Remaining</span>
+
+        <strong>{{ smsWallet.balance.toLocaleString() }}</strong>
+        <small>SMS credits</small>
+      </div>
+
+      <div class="summary-card">
+  <span>Estimated Rate</span>
+
+  <strong>
+    GHS {{ smsSellingPrice.toFixed(4) }}
+  </strong>
+
+  <small>per SMS segment</small>
+</div>
+
+    </section>
+
+    <!-- MAIN GRID -->
+    <section class="sms-layout">
+
+      <!-- LEFT COLUMN -->
+      <div class="left-column">
+
+        <!-- BUY SMS BUNDLE -->
+        <div class="sms-card">
+
+          <div class="card-header">
+            <div>
+              <h2>Buy SMS Bundle</h2>
+              <p>
+                Choose a bundle and request top-up. Your account will be credited
+                after payment confirmation.
+              </p>
+            </div>
+          </div>
+
+          <div class="bundle-grid">
+
+            <button
+              v-for="bundle in bundles"
+              :key="bundle.amount"
+              class="bundle-card"
+              :class="{ selected: selectedBundle?.amount === bundle.amount }"
+              @click="selectBundle(bundle)"
+            >
+              <span>GHS {{ bundle.amount }}</span>
+
+              <strong>
+                {{ bundle.credits.toLocaleString() }}
+              </strong>
+
+              <small>SMS credits</small>
+            </button>
+
+          </div>
+
+          <div class="field">
+  <label>Custom Amount</label>
+
+  <input
+    v-model.number="customAmount"
+    type="number"
+    min="10"
+    max="100"
+    step="1"
+    placeholder="Enter amount from 10 to 100"
+  >
+
+  <small>
+    Enter whole cedis only. Decimals like 10.50 are not allowed.
+  </small>
+</div>
+
+<div
+  v-if="customAmount"
+  class="sms-units-preview"
+>
+  <span>SMS Units You Will Receive</span>
+
+  <strong>
+    {{ customSmsUnits.toLocaleString() }}
+  </strong>
+
+  <small>
+    Calculated at GHS {{ smsSellingPrice.toFixed(4) }} per SMS unit
+  </small>
+</div>
+
+
+          <button
+  class="primary-btn"
+  :disabled="!isValidSmsPurchaseAmount"
+  @click="requestTopUp"
+>
+  Buy SMS Credits
+</button>
+
+        </div>
+
+        <!-- SEND SMS -->
+        <!-- <div class="sms-card">
+
+          <div class="card-header">
+            <div>
+              <h2>Send SMS</h2>
+              <p>
+                Send announcements, fee reminders, attendance notices and
+                general messages.
+              </p>
+            </div>
+          </div>
+
+          <div class="field">
+            <label>Sender ID</label>
+
+            <input
+              v-model="smsForm.senderId"
+              type="text"
+              maxlength="11"
+              placeholder="Example: PHENASCH"
+            >
+
+            <small>
+              Sender ID must be approved before sending.
+            </small>
+          </div>
+
+          <div class="field">
+            <label>Recipient Group</label>
+
+            <select v-model="smsForm.recipientGroup">
+              <option value="">
+                Select recipient group
+              </option>
+
+              <option value="all-parents">
+                All Parents
+              </option>
+
+              <option value="class-parents">
+                Parents by Class
+              </option>
+
+              <option value="fee-debtors">
+                Fee Debtors
+              </option>
+
+              <option value="staff">
+                Staff
+              </option>
+            </select>
+          </div>
+
+          <div
+            v-if="smsForm.recipientGroup === 'class-parents'"
+            class="field"
+          >
+            <label>Class</label>
+
+            <select v-model="smsForm.className">
+              <option value="">
+                Select class
+              </option>
+
+              <option
+                v-for="className in classOptions"
+                :key="className"
+                :value="className"
+              >
+                {{ className }}
+              </option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label>Message</label>
+
+            <textarea
+              v-model="smsForm.message"
+              rows="5"
+              placeholder="Type SMS message here..."
+            />
+          </div>
+
+          <div class="estimate-box">
+            <div>
+              <span>Characters</span>
+              <strong>{{ messageLength }}</strong>
+            </div>
+
+            <div>
+              <span>Segments</span>
+              <strong>{{ segmentCount }}</strong>
+            </div>
+
+            <div>
+              <span>Recipients</span>
+              <strong>{{ estimatedRecipients }}</strong>
+            </div>
+
+            <div>
+              <span>Estimated Cost</span>
+              <strong>{{ estimatedCost.toLocaleString() }}</strong>
+            </div>
+          </div>
+
+          <button
+            class="primary-btn"
+            :disabled="!canSendSms"
+            @click="sendSms"
+          >
+            Send SMS
+          </button>
+
+        </div> -->
+
+      </div>
+
+      <!-- RIGHT COLUMN -->
+      <div class="right-column">
+
+        <!-- SENDER ID REQUEST -->
+        <div class="sms-card">
+
+          <div class="card-header">
+            <div>
+              <h2>Sender ID Request</h2>
+              <p>
+                Request your preferred SMS sender name.
+                Your request will be reviewed and approved within 24 hours.
+.
+              </p>
+            </div>
+          </div>
+
+          <div class="sender-status">
+  <span>Status</span>
+
+  <strong :class="senderId.status.toLowerCase()">
+    {{ senderId.status }}
+  </strong>
+</div>
+
+<div
+  v-if="senderId.activeSenderId"
+  class="sender-status"
+>
+  <span>Current Sender ID</span>
+
+  <strong>
+    {{ senderId.activeSenderId }}
+  </strong>
+</div>
+          <div class="field">
+            <label>Preferred Sender ID</label>
+
+            <input
+              v-model="senderIdForm.senderId"
+              type="text"
+              maxlength="11"
+              placeholder="Example: KOGSCHOOL"
+              @input="formatSenderId"
+            >
+
+            <small>
+              Maximum 11 characters. No spaces recommended.
+            </small>
+          </div>
+
+          <!-- <div class="field">
+            <label>Reason / Description</label>
+
+            <textarea
+              v-model="senderIdForm.reason"
+              rows="4"
+              placeholder="Example: Official sender ID for our school SMS alerts."
+            />
+          </div> -->
+
+          <button
+            class="secondary-btn"
+            @click="submitSenderIdRequest"
+          >
+            Submit Sender ID Request
+          </button>
+
+        </div>
+
+        <!-- PRICING INFO -->
+        <!-- <div class="sms-card">
+
+          <h2>Pricing Model</h2>
+
+          <div class="pricing-list">
+
+            <div>
+              <span>Phena Selling Price</span>
+              <strong>
+                GHS {{ pricing.sellingPricePerSms.toFixed(3) }}
+              </strong>
+            </div>
+
+            <div>
+              <span>Provider Cost</span>
+              <strong>
+                GHS {{ pricing.providerCostPerSms.toFixed(3) }}
+              </strong>
+            </div>
+
+            <div>
+              <span>Credit Type</span>
+              <strong>Non-expiry</strong>
+            </div>
+
+            <div>
+              <span>Charge Rule</span>
+              <strong>Per SMS segment</strong>
+            </div>
+
+          </div>
+
+        </div> -->
+
+      </div>
+
+    </section>
+
+    <!-- HISTORY -->
+    <section class="sms-card">
+
+      <div class="card-header">
+        <div>
+          <h2>Recent SMS Activity</h2>
+          <p>
+            Track recent top-ups, SMS campaigns and wallet deductions.
+          </p>
+        </div>
+      </div>
+
+      <div class="history-table">
+
+        <div class="history-row history-head">
+          <span>Date</span>
+          <span>Type</span>
+          <span>Description</span>
+          <span>Credits</span>
+          <span>Status</span>
+        </div>
+
+        <div
+          v-for="item in smsHistory"
+          :key="item.id"
+          class="history-row"
+        >
+          <span>{{ item.date }}</span>
+          <span>{{ item.type }}</span>
+          <span>{{ item.description }}</span>
+          <span>{{ item.credits }}</span>
+          <span>
+            <strong :class="item.status.toLowerCase()">
+              {{ item.status }}
+            </strong>
+          </span>
+        </div>
+
+      </div>
+
+    </section>
+
+    <div
+  v-if="deleteSenderModalVisible"
+  class="modal-backdrop"
+>
+  <div class="delete-modal">
+
+    <div class="delete-modal-icon">
+      !
+    </div>
+
+    <h3>
+      Delete Sender ID?
+    </h3>
+
+    <p>
+      Are you sure you want to delete this sender ID request?
+      You will need to submit a new sender ID request again.
+    </p>
+
+    <div class="delete-modal-details">
+      <span>Sender ID</span>
+
+      <strong>
+        {{ senderId.activeSenderId }}
+      </strong>
+    </div>
+
+    <div class="modal-actions">
+
+      <button
+        class="cancel-modal-btn"
+        type="button"
+        @click="closeDeleteSenderModal"
+      >
+        Cancel
+      </button>
+
+      <button
+        class="confirm-delete-btn"
+        type="button"
+        :disabled="deleteSenderLoading"
+        @click="confirmDeleteSenderId"
+      >
+        {{
+          deleteSenderLoading
+            ? 'Deleting...'
+            : 'Yes, Delete'
+        }}
+      </button>
+
+    </div>
+
+  </div>
+</div>
+
+
+<div
+  v-if="loadWalletModalVisible"
+  class="modal-backdrop"
+>
+  <div class="wallet-modal">
+
+    <div class="wallet-modal-icon">
+      ₵
+    </div>
+
+    <h3>
+      Load Wallet
+    </h3>
+
+    <p>
+      Enter the amount you want to load into your SMS wallet.
+      You can load from GHS 10.00 to GHS 100.00.
+    </p>
+
+    <div class="field">
+      <label>Amount</label>
+
+      <input
+        v-model="walletAmount"
+        type="number"
+        min="10"
+        max="100"
+        step="0.01"
+        placeholder="Example: 10.00"
+      >
+
+      <small>
+        Minimum GHS 10.00. Maximum GHS 100.00.
+      </small>
+    </div>
+
+
+
+    <!-- // preview
+<div class="wallet-preview">
+  <span>Amount to Pay</span>
+
+  <strong>
+    GHS {{ formattedWalletAmount }}
+  </strong>
+</div> -->
+
+
+    <div class="modal-actions">
+
+      <button
+        class="cancel-modal-btn"
+        type="button"
+        :disabled="walletLoading"
+        @click="closeLoadWalletModal"
+      >
+        Cancel
+      </button>
+
+      <button
+        class="paystack-btn"
+        type="button"
+        :disabled="walletLoading"
+        @click="payWithPaystack"
+      >
+        {{
+          walletLoading
+            ? 'Processing...'
+            : 'Pay with Paystack'
+        }}
+      </button>
+
+    </div>
+
+  </div>
+</div>
+
+  </div>
 </template>
 
+
+<script setup>
+import { useToast } from 'primevue/usetoast'
+import { computed, onMounted, reactive, ref } from 'vue'
+
+
+const smsSellingPrice = ref(0.055)   // mine
+
+
+const customSmsUnits = computed(() => {
+
+  const amount =
+    Number(customAmount.value)
+
+  if (!amount || Number.isNaN(amount)) {
+    return 0
+  }
+
+  return Math.floor(
+    amount / smsSellingPrice.value
+  )
+})
+
+import {
+    createWalletTopUpTransaction,
+    deleteSenderId,
+    getAccountEmailByTenantCode,
+    getClientSmsWallet,
+    getLatestSenderId,
+    purchaseSmsCredits,
+    requestSenderId,
+    verifyWalletTopUpPayment
+} from '@/services/auth.js'
+
+const toast = useToast()
+
+const PAYSTACK_PUBLIC_KEY =
+  import.meta.env.VITE_PAYSTACK_PUBLIC_KEY ||
+  'pk_live_851550690ca2d39b76b6fadacf0a760db6adf652'
+
+
+const deleteSenderModalVisible = ref(false)
+
+const deleteSenderLoading = ref(false)
+
+const smsWallet = reactive({
+  balance: 0,
+  totalPurchased: 0,
+  totalUsed: 0,
+})
+
+
+
+
+const walletBalance = ref(0.00)
+
+const loadWalletModalVisible = ref(false)
+
+const walletAmount = ref('')
+
+const walletLoading = ref(false)
+
+const formattedWalletAmount = computed(() => {
+
+  const amount =
+    Number(walletAmount.value)
+
+  if (!amount || Number.isNaN(amount)) {
+    return '0.00'
+  }
+
+  return
+amount.toFixed(2)
+})
+
+
+
+const openDeleteSenderModal = () => {
+
+  if (!senderId.id) {
+
+    showToast(
+      'warn',
+      'No Sender ID',
+      'No sender ID request is available to delete.'
+    )
+
+    return
+  }
+
+  deleteSenderModalVisible.value = true
+}
+
+
+const openLoadWalletModal = () => {
+
+  walletAmount.value = ''
+
+  loadWalletModalVisible.value = true
+}
+
+const closeLoadWalletModal = () => {
+
+  if (walletLoading.value) {
+    return
+  }
+
+  loadWalletModalVisible.value
+= false
+}
+
+const payWithPaystack = async () => {
+
+  const amount =
+    Number(walletAmount.value)
+
+  if (!walletAmount.value || Number.isNaN(amount)) {
+
+    showToast(
+      'warn',
+      'Validation',
+      'Please enter an amount to load.'
+    )
+
+    return
+  }
+
+  if (amount < 10) {
+
+    showToast(
+      'warn',
+      'Validation',
+      'You cannot load less than GHS 10.00.'
+    )
+
+    return
+  }
+
+  if (amount > 100) {
+
+    showToast(
+      'warn',
+      'Validation',
+      'You cannot load more than GHS 100.00.'
+    )
+
+    return
+  }
+
+  const roundedAmount =
+    Number(amount.toFixed(2))
+
+  const tenantCode =
+    localStorage.getItem('tenantCode') || ''
+
+  if (!tenantCode) {
+
+    showToast(
+      'error',
+      'Missing Tenant',
+      'Tenant code not found.'
+    )
+
+    return
+  }
+
+  if (
+    !window.PaystackPop ||
+    typeof window.PaystackPop.setup !== 'function'
+  ) {
+
+    showToast(
+      'error',
+      'Payment Not Ready',
+      'Payment service is still loading. Please try again.'
+    )
+
+    return
+  }
+
+  try {
+
+    walletLoading.value = true
+
+    const emailResponse =
+      await getAccountEmailByTenantCode(
+        tenantCode
+      )
+
+    const payerEmail =
+      emailResponse.data?.email || ''
+
+    if (!payerEmail) {
+
+      showToast(
+        'error',
+        'Missing Email',
+        'Unable to retrieve account email for payment.'
+      )
+
+      walletLoading.value = false
+
+      return
+    }
+
+    const createResponse =
+      await createWalletTopUpTransaction({
+        tenantCode,
+        amount: roundedAmount.toFixed(2),
+        email: payerEmail,
+      })
+
+    const reference =
+      createResponse.data?.reference
+
+    if (!reference) {
+
+      showToast(
+        'error',
+        'Transaction Error',
+        'Unable to create payment reference.'
+      )
+
+      walletLoading.value = false
+
+      return
+    }
+
+    const handler =
+      window.PaystackPop.setup({
+        key: PAYSTACK_PUBLIC_KEY,
+        email: payerEmail,
+        amount: Math.round(roundedAmount * 100),
+        currency: 'GHS',
+        ref: reference,
+
+        callback: function (response) {
+          verifyWalletPayment(
+            response.reference,
+            roundedAmount
+          )
+        },
+
+        onClose: function () {
+          walletLoading.value = false
+        },
+      })
+
+    handler.openIframe()
+
+  } catch (error) {
+
+    console.error(
+      'Failed to initialize wallet top-up:',
+      error
+    )
+
+    showToast(
+      'error',
+      'Payment Error',
+      error?.response?.data?.message ||
+        'Unable to start wallet payment.'
+    )
+
+    walletLoading.value = false
+  }
+}
+
+const verifyWalletPayment = async (
+  reference,
+  paidAmount
+) => {
+
+  const tenantCode =
+    localStorage.getItem('tenantCode') || ''
+
+  if (!tenantCode) {
+
+    showToast(
+      'error',
+      'Missing Tenant',
+      'Tenant code not found.'
+    )
+
+    walletLoading.value = false
+
+    return
+  }
+
+  try {
+    console.log(" print reference and tenantcode for verification:", reference, tenantCode)
+
+    const response =
+      await verifyWalletTopUpPayment({
+        tenantCode,
+        reference,
+      })
+      console.log(
+        'Wallet payment verification response: print',
+        response
+      )
+
+    if (response.data?.success) {
+
+      await loadClientSmsWallet()
+
+      smsHistory.value.unshift({
+        id: Date.now(),
+        date: new Date().toISOString().slice(0, 10),
+        type: 'Wallet',
+        description: `Wallet loaded with GHS ${Number(paidAmount).toFixed(2)}`,
+        credits: '-',
+        status: 'Completed',
+      })
+
+      showToast(
+        'success',
+        'Payment Successful',
+        'Wallet loaded successfully.'
+      )
+
+      walletAmount.value = ''
+      loadWalletModalVisible.value = false
+
+    } else {
+
+      showToast(
+        'error',
+        'Verification Failed',
+        response.data?.message ||
+          'Payment verification failed.'
+      )
+    }
+
+  } catch (error) {
+
+    console.error(
+      'Wallet verification failed:',
+      error
+    )
+
+    showToast(
+      'error',
+      'Verification Error',
+      error?.response?.data?.message ||
+        'Unable to verify payment.'
+    )
+
+  } finally {
+
+    walletLoading.value = false
+  }
+}
+
+
+const loadPaystackScript = () => {
+
+  if (document.getElementById('paystack-script')) {
+    return
+  }
+
+  const script =
+    document.createElement('script')
+
+  script.id =
+    'paystack-script'
+
+  script.src =
+    'https://js.paystack.co/v1/inline.js'
+
+  script.async =
+    true
+
+  document.body.appendChild(
+    script
+  )
+}
+
+
+const closeDeleteSenderModal = () => {
+
+  if (deleteSenderLoading.value) {
+    return
+  }
+
+  deleteSenderModalVisible.value = false
+}
+
+
+const confirmDeleteSenderId = async () => {
+
+  const tenantCode =
+    localStorage.getItem('tenantCode') || ''
+
+  if (!tenantCode) {
+
+    showToast(
+      'error',
+      'Missing Tenant',
+      'Tenant code not found.'
+    )
+
+    return
+  }
+
+  if (!senderId.id) {
+
+    showToast(
+      'warn',
+      'No Sender ID',
+      'No sender ID request is available to delete.'
+    )
+
+    return
+  }
+
+  try {
+
+    deleteSenderLoading.value = true
+
+    await deleteSenderId(
+      tenantCode,
+      senderId.id
+    )
+
+    senderId.id = null
+    senderId.activeSenderId = ''
+    senderId.status = 'Not requested'
+    senderId.reason = ''
+    senderId.rejectionReason = ''
+    senderId.available = false
+
+    smsForm.senderId = ''
+
+    smsHistory.value.unshift({
+      id: Date.now(),
+      date: new Date().toISOString().slice(0, 10),
+      type: 'Sender ID',
+      description: 'Sender ID request deleted',
+      credits: '-',
+      status: 'Completed',
+    })
+
+    showToast(
+      'success',
+      'Deleted',
+      'Sender ID request deleted successfully.'
+    )
+
+    deleteSenderModalVisible.value = false
+
+    await loadLatestSenderId()
+
+  } catch (error) {
+
+    console.error(
+      'Failed to delete sender ID:',
+      error
+    )
+
+    showToast(
+      'error',
+      'Delete Failed',
+      error?.response?.data?.message ||
+        'Unable to delete sender ID request.'
+    )
+
+  } finally {
+
+    deleteSenderLoading.value = false
+  }
+}
+
+
+const loadLatestSenderId = async () => {
+
+  try {
+
+    const tenantCode =
+      localStorage.getItem('tenantCode') || ''
+
+    if (!tenantCode) {
+
+      showToast(
+        'warn',
+        'Missing Tenant',
+        'Tenant code not found.'
+      )
+
+      return
+    }
+
+    const response =
+      await getLatestSenderId(
+        tenantCode
+      )
+
+      console.log(
+        'Latest Sender ID response print:',
+        response
+      )
+
+    const data =
+      response.data
+
+    if (!data.available || !data.senderId) {
+
+      senderId.id = null
+      senderId.activeSenderId = ''
+      senderId.status = 'Not requested'
+      senderId.reason = ''
+      senderId.rejectionReason = ''
+      senderId.available = false
+
+      return
+    }
+
+    senderId.id =
+      data.senderId.id
+
+    senderId.activeSenderId =
+      data.senderId.senderId || ''
+
+    senderId.status =
+      data.senderId.status || 'Pending'
+
+    senderId.reason =
+      data.senderId.reason || ''
+
+    senderId.rejectionReason =
+      data.senderId.rejectionReason || ''
+
+    senderId.available = true
+
+    smsForm.senderId =
+      data.senderId.status === 'approved'
+        ? data.senderId.senderId
+        : ''
+
+  } catch (error) {
+
+    console.error(
+      'Failed to load latest sender ID:',
+      error
+    )
+
+    senderId.id = null
+    senderId.activeSenderId = ''
+    senderId.status = 'Not requested'
+    senderId.available = false
+  }
+}
+
+const senderId = reactive({
+  id: null,
+  activeSenderId: '',
+  status: 'Not requested',
+  reason: '',
+  rejectionReason: '',
+  available: false,
+})
+
+const isValidSmsPurchaseAmount = computed(() => {
+
+  const amount =
+    Number(customAmount.value)
+
+  if (!amount || Number.isNaN(amount)) {
+    return false
+  }
+
+  if (!Number.isInteger(amount)) {
+    return false
+  }
+
+  if (amount < 10) {
+    return false
+  }
+
+  if (amount > 100) {
+    return false
+  }
+
+  return true
+})
+
+const selectBundle = (bundle) => {
+
+  selectedBundle.value =
+    bundle
+
+  customAmount.value =
+    bundle.amount
+}
+
+const selectedBundle = ref(null)
+
+const customAmount = ref(null)
+
+
+
+const bundleAmounts = [
+  10,
+  20,
+  50,
+  100,
+]
+
+const bundles = computed(() => {
+
+  return bundleAmounts.map((amount) => {
+    return {
+      amount,
+      credits: Math.floor(
+        amount / smsSellingPrice.value
+      ),
+    }
+  })
+})
+
+const senderIdForm = reactive({
+  senderId: '',
+  reason: '',
+})
+
+const smsForm = reactive({
+  senderId: '',
+  recipientGroup: '',
+  className: '',
+  message: '',
+})
+
+const classOptions = [
+  'class 1',
+  'class 2',
+  'class 3',
+  'class 4',
+  'class 5',
+  'class 6',
+]
+
+const smsHistory = ref([
+  {
+    id: 1,
+    date: '2026-08-15',
+    type: 'Top-up',
+    description: 'Initial SMS credit purchase',
+    credits: '+285',
+    status: 'Completed',
+  },
+  {
+    id: 2,
+    date: '2026-08-15',
+    type: 'Sender ID',
+    description: 'Sender ID request submitted',
+    credits: '-',
+    status: 'Pending',
+  },
+])
+
+const messageLength = computed(() => {
+  return smsForm.message.length
+})
+
+const segmentCount = computed(() => {
+  if (messageLength.value === 0) {
+    return 0
+  }
+
+  return Math.ceil(
+    messageLength.value / 160
+  )
+})
+
+const estimatedRecipients = computed(() => {
+  if (!smsForm.recipientGroup) {
+    return 0
+  }
+
+  if (smsForm.recipientGroup === 'all-parents') {
+    return 420
+  }
+
+  if (smsForm.recipientGroup === 'class-parents') {
+    return smsForm.className ? 45 : 0
+  }
+
+  if (smsForm.recipientGroup === 'fee-debtors') {
+    return 80
+  }
+
+  if (smsForm.recipientGroup === 'staff') {
+    return 25
+  }
+
+  return 0
+})
+
+const estimatedCost = computed(() => {
+  return segmentCount.value *
+    estimatedRecipients.value
+})
+
+const canSendSms = computed(() => {
+  return smsForm.senderId.trim().length > 0 &&
+    smsForm.recipientGroup &&
+    smsForm.message.trim().length > 0 &&
+    estimatedCost.value > 0 &&
+    smsWallet.balance >= estimatedCost.value
+})
+
+function showToast(
+  severity,
+  summary,
+  detail
+) {
+  toast.add({
+    severity,
+    summary,
+    detail,
+    life: 4000,
+  })
+}
+
+const loadClientSmsWallet = async () => {
+
+  const tenantCode =
+    localStorage.getItem('tenantCode') || ''
+
+  if (!tenantCode) {
+
+    showToast(
+      'warn',
+      'Missing Tenant',
+      'Tenant code not found.'
+    )
+
+    return
+  }
+
+  try {
+
+    const response =
+      await getClientSmsWallet(
+        tenantCode
+      )
+
+    console.log(
+      'Client SMS wallet response print:',
+      response.data
+    )
+
+    walletBalance.value =
+      Number(response.data?.cashBalance || 0)
+
+    smsWallet.balance =
+      Number(response.data?.smsBalance || 0)
+
+  } catch (error) {
+
+    console.error(
+      'Failed to load client SMS wallet:',
+      error
+    )
+
+    showToast(
+      'error',
+      'Wallet Error',
+      error?.response?.data?.message ||
+        'Unable to load wallet balance.'
+    )
+  }
+}
+
+onMounted(async () => {
+
+  loadPaystackScript()
+
+  await loadLatestSenderId()
+
+  await loadClientSmsWallet()
+
+})
+
+
+function formatSenderId() {
+
+  senderIdForm.senderId =
+    senderIdForm.senderId
+      .replace(/\s+/g, '')
+
+      .slice(0, 11)
+}
+
+
+
+const submitSenderIdRequest = async () => {
+
+  const tenantCode =
+    localStorage.getItem('tenantCode') || ''
+
+  const schoolName =
+    localStorage.getItem('schoolName') || ''
+
+  const sender =
+    senderIdForm.senderId
+      .trim()
+      .replace(/\s+/g, '')
+
+      .slice(0, 11)
+
+  const reason =
+    senderIdForm.reason.trim()
+
+  if (!tenantCode) {
+
+    showToast(
+      'error',
+      'Missing Tenant',
+      'Tenant code not found.'
+    )
+
+    return
+  }
+
+  if (!sender) {
+
+    showToast(
+      'warn',
+      'Validation',
+      'Please enter a sender ID.'
+    )
+
+    return
+  }
+
+  try {
+
+    const payload = {
+      tenantCode,
+      schoolName,
+      senderId: sender,
+      reason: reason || null,
+    }
+
+    const response =
+  await requestSenderId(
+    tenantCode,
+    payload
+  )
+
+
+      console.log(
+        'Sender ID request response print:',
+        response
+      )
+
+    senderId.id =
+      response.data.id
+
+    senderId.activeSenderId =
+      response.data.senderId
+
+    senderId.status =
+      response.data.status || 'Pending'
+
+    senderId.reason =
+      response.data.reason || ''
+
+    senderId.rejectionReason =
+      response.data.rejectionReason || ''
+
+    senderId.available =
+      true
+
+    smsHistory.value.unshift({
+      id: Date.now(),
+      date: new Date().toISOString().slice(0, 10),
+      type: 'Sender ID',
+      description: `Sender ID request submitted: ${sender}`,
+      credits: '-',
+      status: 'Pending',
+    })
+
+    showToast(
+      'success',
+      'Request Sent',
+      'Sender ID request submitted successfully.'
+    )
+
+    senderIdForm.senderId = ''
+    senderIdForm.reason = ''
+
+
+
+  } catch (error) {
+    console.log('Error response print:', error)
+
+    console.error(
+      'Failed to request sender ID:',
+      error
+    )
+
+    showToast(
+      'error',
+      'Sender ID Request Failed',
+      error?.response?.data?.message ||
+        'Unable to request sender ID.'
+  )
+  }
+}
+
+
+const requestTopUp = async () => {
+
+  const tenantCode =
+    localStorage.getItem('tenantCode') || ''
+
+  const amount =
+    Number(customAmount.value)
+
+  if (!tenantCode) {
+
+    showToast(
+      'error',
+      'Missing Tenant',
+      'Tenant code not found.'
+    )
+
+    return
+  }
+
+  if (!amount || Number.isNaN(amount)) {
+
+    showToast(
+      'warn',
+      'Validation',
+      'Please select or enter an amount.'
+    )
+
+    return
+  }
+
+  if (!Number.isInteger(amount)) {
+
+    showToast(
+      'warn',
+      'Validation',
+      'Decimals are not allowed. Please enter a whole cedi amount.'
+    )
+
+    return
+  }
+
+  if (amount < 10) {
+
+    showToast(
+      'warn',
+      'Validation',
+      'You cannot buy less than GHS 10.00 worth of SMS.'
+    )
+
+    return
+  }
+
+  if (amount > 100) {
+
+    showToast(
+      'warn',
+      'Validation',
+      'You cannot buy more than GHS 100.00 worth of SMS at once.'
+    )
+
+    return
+  }
+
+  const credits =
+    Math.floor(
+      amount / smsSellingPrice.value
+    )
+
+  if (credits <= 0) {
+
+    showToast(
+      'warn',
+      'Validation',
+      'SMS credits could not be calculated.'
+    )
+
+    return
+  }
+
+  try {
+
+    const response =
+      await purchaseSmsCredits({
+        tenantCode,
+        amount: amount.toFixed(2),
+        smsCredits: credits,
+      })
+
+    if (!response.data?.success) {
+
+      showToast(
+        'error',
+        'SMS Purchase Failed',
+        response.data?.message ||
+          'Unable to purchase SMS credits.'
+      )
+
+      return
+    }
+
+    walletBalance.value =
+      Number(response.data.cashBalance || 0)
+
+    smsWallet.balance =
+      Number(response.data.smsBalance || 0)
+
+    smsWallet.totalPurchased =
+      Number(response.data.totalSmsPurchased || 0)
+
+    smsHistory.value.unshift({
+      id: Date.now(),
+      date: new Date().toISOString().slice(0, 10),
+      type: 'SMS Purchase',
+      description: `Purchased ${response.data.smsCreditsPurchased.toLocaleString()} SMS units for GHS ${Number(response.data.amountSpent).toFixed(2)}`,
+      credits: `+${response.data.smsCreditsPurchased.toLocaleString()}`,
+      status: 'Completed',
+    })
+
+    showToast(
+      'success',
+      'SMS Purchased',
+      `${response.data.smsCreditsPurchased.toLocaleString()} SMS units added successfully.`
+    )
+
+    selectedBundle.value = null
+    customAmount.value = null
+
+    await loadClientSmsWallet()
+
+  } catch (error) {
+
+    console.error(
+      'Failed to purchase SMS credits:',
+      error
+    )
+
+    showToast(
+      'error',
+      'SMS Purchase Failed',
+      error?.response?.data?.message ||
+        'Unable to purchase SMS credits.'
+    )
+  }
+}
+
+
+function sendSms() {
+  if (!canSendSms.value) {
+    showToast(
+      'warn',
+      'Validation',
+      'Please complete the SMS form and ensure you have enough credits.'
+    )
+
+    return
+  }
+
+  smsWallet.balance -= estimatedCost.value
+  smsWallet.totalUsed += estimatedCost.value
+
+  smsHistory.value.unshift({
+    id: Date.now(),
+    date: new Date().toISOString().slice(0, 10),
+    type: 'Campaign',
+    description: `${smsForm.recipientGroup} SMS campaign`,
+    credits: `-${estimatedCost.value}`,
+    status: 'Sent',
+  })
+
+  showToast(
+    'success',
+    'SMS Sent',
+    'SMS campaign sent successfully.'
+  )
+
+  smsForm.message = ''
+  smsForm.recipientGroup = ''
+  smsForm.className = ''
+}
+</script>
+
+
+
 <style scoped>
+.sms-page {
+  display: grid;
+  gap: 24px;
+}
+
+
+.sms-units-preview {
+  display: grid;
+  gap: 6px;
+  margin: 12px 0 18px;
+  padding: 16px;
+  border-radius: 16px;
+  background: #fff7df;
+  border: 1px solid rgba(201, 150, 53, 0.28);
+}
+
+.sms-units-preview span {
+  color: #92400e;
+  font-size: 12px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.sms-units-preview strong {
+  color: #071926;
+  font-size: 28px;
+  font-weight: 950;
+}
+
+.sms-units-preview small {
+  color: #64748b;
+}
+
+.wallet-summary-card {
+  position: relative;
+}
+
+.load-wallet-btn {
+  margin-top: 14px;
+  width: 100%;
+  height: 38px;
+  border: none;
+  border-radius: 12px;
+  color: #071926;
+  background: #f5d58c;
+  font-size: 12px;
+  font-weight: 900;
+  cursor: pointer;
+  transition: 0.25s ease;
+}
+
+.load-wallet-btn:hover {
+  background: #c99635;
+  transform: translateY(-1px);
+}
+
+/* =========================
+   LOAD WALLET MODAL
+========================= */
+
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  background: rgba(15, 23, 42, 0.55);
+  backdrop-filter: blur(6px);
+}
+
+.wallet-modal {
+  width: min(440px, 100%);
+  padding: 28px;
+  border-radius: 26px;
+  background: #ffffff;
+  box-shadow:
+    0 30px 90px rgba(15, 23, 42, 0.28);
+  text-align: center;
+}
+
+.wallet-modal-icon {
+  width: 56px;
+  height: 56px;
+  margin: 0 auto 16px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  color: #071926;
+  background: #f5d58c;
+  font-size: 28px;
+  font-weight: 950;
+}
+
+.wallet-modal h3 {
+  margin: 0;
+  color: #111827;
+  font-size: 22px;
+  font-weight: 950;
+}
+
+.wallet-modal p {
+  margin: 12px 0 18px;
+  color: #64748b;
+  line-height: 1.6;
+}
+
+.wallet-preview {
+  display: grid;
+  gap: 6px;
+  margin-bottom: 22px;
+  padding: 16px;
+  border-radius: 16px;
+  background: #f9fafb;
+  border: 1px solid #eef2f7;
+}
+
+.wallet-preview span {
+  color: #64748b;
+  font-size: 11px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.wallet-preview strong {
+  color: #111827;
+  font-size: 23px;
+  font-weight: 950;
+}
+
+.modal-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.cancel-modal-btn,
+.paystack-btn {
+  height: 46px;
+  border: none;
+  border-radius: 14px;
+  font-size: 13px;
+  font-weight: 900;
+  cursor: pointer;
+  transition: 0.25s ease;
+}
+
+.cancel-modal-btn {
+  color: #374151;
+  background: #f3f4f6;
+}
+
+.cancel-modal-btn:hover {
+  background: #e5e7eb;
+}
+
+.paystack-btn {
+  color: #071926;
+  background:
+    linear-gradient(
+      135deg,
+      #f5d58c,
+      #c99635
+    );
+}
+
+.paystack-btn:hover {
+  transform: translateY(-1px);
+}
+
+.cancel-modal-btn:disabled,
+.paystack-btn:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+@media (max-width: 520px) {
+  .modal-actions {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* =========================
+   HERO
+========================= */
+
+.sms-hero {
+  display: flex;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 34px;
+  border-radius: 30px;
+  color: #ffffff;
+  background:
+    radial-gradient(
+      circle at top left,
+      rgba(245, 213, 140, 0.26),
+      transparent 35%
+    ),
+    linear-gradient(
+      135deg,
+      #071926,
+      #0f2742
+    );
+  box-shadow:
+    0 24px 70px rgba(15, 23, 42, 0.18);
+}
+
+.sms-badge {
+  display: inline-flex;
+  margin-bottom: 14px;
+  padding: 8px 14px;
+  border-radius: 999px;
+  background: #f5d58c;
+  color: #071926;
+  font-size: 12px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.sms-hero h1 {
+  margin: 0;
+  color: papayawhip;
+  font-size: 39px;
+  font-weight: 950;
+  letter-spacing: -0.04em;
+}
+
+.sms-hero p {
+  max-width: 680px;
+  margin: 12px 0 0;
+  color: rgba(255, 255, 255, 0.78);
+  line-height: 1.7;
+}
+
+.hero-balance-card {
+  min-width: 240px;
+  align-self: stretch;
+  display: grid;
+  align-content: center;
+  gap: 8px;
+  padding: 24px;
+  border-radius: 24px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+}
+
+.hero-balance-card span,
+.hero-balance-card small {
+  color: rgba(255, 255, 255, 0.76);
+}
+
+.hero-balance-card strong {
+  color: #f5d58c;
+  font-size: 40px;
+  font-weight: 950;
+}
+
+/* =========================
+   SUMMARY CARDS
+========================= */
+
+.summary-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.summary-card {
+  padding: 22px;
+  border-radius: 22px;
+  background: #ffffff;
+  box-shadow:
+    0 14px 40px rgba(15, 23, 42, 0.07);
+}
+
+.summary-card span {
+  color: #64748b;
+  font-size: 12px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.summary-card strong {
+  display: block;
+  margin-top: 8px;
+  color: #111827;
+  font-size: 26px;
+  font-weight: 950;
+}
+
+.summary-card small {
+  color: #64748b;
+}
+
+/* =========================
+   MAIN LAYOUT
+========================= */
+
+.sms-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.45fr) minmax(340px, 0.55fr);
+  gap: 24px;
+}
+
+.left-column,
+.right-column {
+  display: grid;
+  gap: 24px;
+  align-content: start;
+}
+
 .sms-card {
-    background: linear-gradient(180deg, #ffffff 0%, #fbfdff 100%);
-    border: 1px solid #e5e7eb;
-    border-radius: 28px;
-    padding: 1.5rem;
-    box-shadow:
-        0 12px 30px rgba(15, 23, 42, 0.06),
-        0 2px 8px rgba(15, 23, 42, 0.03);
+  padding: 26px;
+  border-radius: 26px;
+  background: #ffffff;
+  box-shadow:
+    0 16px 50px rgba(15, 23, 42, 0.08);
 }
 
 .card-header {
-    display: flex;
-    justify-content: space-between;
-    gap: 1rem;
-    align-items: flex-start;
-    margin-bottom: 1.25rem;
-    flex-wrap: wrap;
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 22px;
 }
 
-.eyebrow {
-    font-size: 0.8rem;
-    font-weight: 700;
-    color: #64748b;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    margin-bottom: 0.35rem;
+.card-header h2,
+.sms-card h2 {
+  margin: 0;
+  color: #111827;
+  font-size: 21px;
+  font-weight: 950;
 }
 
-.card-title {
-    font-size: 1.5rem;
-    line-height: 1.2;
-    font-weight: 700;
-    color: #0f172a;
-    margin: 0;
+.card-header p {
+  margin: 7px 0 0;
+  color: #64748b;
+  line-height: 1.6;
 }
 
-.card-subtitle {
-    margin-top: 0.35rem;
-    font-size: 0.95rem;
-    color: #64748b;
-    max-width: 680px;
+/* =========================
+   BUNDLE CARDS
+========================= */
+
+.bundle-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+  margin-bottom: 20px;
 }
 
-.header-badges {
-    display: flex;
-    gap: 0.65rem;
-    flex-wrap: wrap;
+.bundle-card {
+  padding: 18px 14px;
+  border: 1px solid #e5e7eb;
+  border-radius: 18px;
+  background: #f9fafb;
+  text-align: left;
+  cursor: pointer;
+  transition: 0.25s ease;
 }
 
-.badge {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 36px;
-    padding: 0.45rem 0.85rem;
-    border-radius: 999px;
-    font-size: 0.84rem;
-    font-weight: 700;
-    white-space: nowrap;
+.sender-summary-card {
+  position: relative;
 }
 
-.badge-soft-blue {
-    background: #eff6ff;
-    color: #2563eb;
-    border: 1px solid #dbeafe;
+.delete-sender-btn {
+  margin-top: 14px;
+  width: 100%;
+  height: 38px;
+  border: none;
+  border-radius: 12px;
+  color: #991b1b;
+  background: #fee2e2;
+  font-size: 12px;
+  font-weight: 900;
+  cursor: pointer;
+  transition: 0.25s ease;
 }
 
-.hero-panel {
-    display: flex;
-    justify-content: space-between;
-    gap: 1rem;
-    align-items: stretch;
-    background: linear-gradient(135deg, #eff6ff 0%, #f8fbff 100%);
-    border: 1px solid #dbeafe;
-    border-radius: 22px;
-    padding: 1.2rem;
-    margin-bottom: 1.1rem;
-    flex-wrap: wrap;
+.delete-sender-btn:hover {
+  background: #fecaca;
+  transform: translateY(-1px);
 }
 
-.hero-left {
-    flex: 1 1 320px;
+/* =========================
+   DELETE MODAL
+========================= */
+
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  background: rgba(15, 23, 42, 0.55);
+  backdrop-filter: blur(6px);
 }
 
-.hero-label {
-    font-size: 0.85rem;
-    font-weight: 600;
-    color: #475569;
-    margin-bottom: 0.4rem;
+.delete-modal {
+  width: min(420px, 100%);
+  padding: 28px;
+  border-radius: 26px;
+  background: #ffffff;
+  box-shadow:
+    0 30px 90px rgba(15, 23, 42, 0.28);
+  text-align: center;
 }
 
-.hero-value {
-    font-size: 2rem;
-    font-weight: 800;
-    letter-spacing: -0.03em;
-    color: #0f172a;
-    margin-bottom: 0.3rem;
+.delete-modal-icon {
+  width: 54px;
+  height: 54px;
+  margin: 0 auto 16px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  color: #991b1b;
+  background: #fee2e2;
+  font-size: 26px;
+  font-weight: 950;
 }
 
-.hero-note {
-    color: #64748b;
-    font-size: 0.92rem;
-    line-height: 1.5;
+.delete-modal h3 {
+  margin: 0;
+  color: #111827;
+  font-size: 22px;
+  font-weight: 950;
 }
 
-.hero-note strong {
-    color: #0f172a;
+.delete-modal p {
+  margin: 12px 0 18px;
+  color: #64748b;
+  line-height: 1.6;
 }
 
-.hero-right {
-    display: flex;
-    align-items: center;
+.delete-modal-details {
+  display: grid;
+  gap: 6px;
+  margin-bottom: 22px;
+  padding: 14px;
+  border-radius: 16px;
+  background: #f9fafb;
+  border: 1px solid #eef2f7;
 }
 
-.mini-summary {
-    min-width: 180px;
-    background: #ffffff;
-    border: 1px solid #dbeafe;
-    border-radius: 18px;
-    padding: 0.9rem 1rem;
-    display: flex;
+.delete-modal-details span {
+  color: #64748b;
+  font-size: 11px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.delete-modal-details strong {
+  color: #111827;
+  font-size: 18px;
+  font-weight: 950;
+}
+
+.modal-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.cancel-modal-btn,
+.confirm-delete-btn {
+  height: 46px;
+  border: none;
+  border-radius: 14px;
+  font-size: 13px;
+  font-weight: 900;
+  cursor: pointer;
+  transition: 0.25s ease;
+}
+
+.cancel-modal-btn {
+  color: #374151;
+  background: #f3f4f6;
+}
+
+.cancel-modal-btn:hover {
+  background: #e5e7eb;
+}
+
+.confirm-delete-btn {
+  color: #ffffff;
+  background: #dc2626;
+}
+
+.confirm-delete-btn:hover {
+  background: #b91c1c;
+}
+
+.confirm-delete-btn:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+@media (max-width: 520px) {
+  .modal-actions {
+    grid-template-columns: 1fr;
+  }
+}
+
+
+.bundle-card:hover,
+.bundle-card.selected {
+  border-color: #c99635;
+  background: #fff7df;
+  transform: translateY(-2px);
+  box-shadow:
+    0 12px 28px rgba(201, 150, 53, 0.18);
+}
+
+.bundle-card span {
+  color: #64748b;
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.bundle-card strong {
+  display: block;
+  margin-top: 8px;
+  color: #071926;
+  font-size: 24px;
+  font-weight: 950;
+}
+
+.bundle-card small {
+  color: #64748b;
+}
+
+/* =========================
+   FORM FIELDS
+========================= */
+
+.field {
+  display: grid;
+  gap: 8px;
+  margin-bottom: 18px;
+}
+
+.field label {
+  color: #374151;
+  font-size: 13px;
+  font-weight: 900;
+}
+
+.field input,
+.field select,
+.field textarea {
+  width: 100%;
+  border: 1px solid #e5e7eb;
+  border-radius: 15px;
+  padding: 0 15px;
+  color: #111827;
+  background: #ffffff;
+  outline: none;
+  transition: 0.25s ease;
+}
+
+.field input,
+.field select {
+  height: 50px;
+}
+
+.field textarea {
+  padding-top: 14px;
+  resize: vertical;
+  min-height: 120px;
+}
+
+.field input:focus,
+.field select:focus,
+.field textarea:focus {
+  border-color: #c99635;
+  box-shadow:
+    0 0 0 4px rgba(201, 150, 53, 0.13);
+}
+
+.field small {
+  color: #64748b;
+  font-size: 12px;
+}
+
+/* =========================
+   BUTTONS
+========================= */
+
+.primary-btn,
+.secondary-btn {
+  width: 100%;
+  height: 52px;
+  border: none;
+  border-radius: 16px;
+  cursor: pointer;
+  font-weight: 950;
+  transition: 0.25s ease;
+}
+
+.primary-btn {
+  color: #071926;
+  background:
+    linear-gradient(
+      135deg,
+      #f5d58c,
+      #c99635
+    );
+}
+
+.secondary-btn {
+  color: #ffffff;
+  background:
+    linear-gradient(
+      135deg,
+      #071926,
+      #0f2742
+    );
+}
+
+.primary-btn:hover,
+.secondary-btn:hover {
+  transform: translateY(-2px);
+}
+
+.primary-btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* =========================
+   SMS ESTIMATE
+========================= */
+
+.estimate-box {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+  margin: 18px 0;
+}
+
+.estimate-box div {
+  padding: 14px;
+  border-radius: 16px;
+  background: #f9fafb;
+  border: 1px solid #eef2f7;
+}
+
+.estimate-box span {
+  display: block;
+  color: #64748b;
+  font-size: 11px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.estimate-box strong {
+  display: block;
+  margin-top: 6px;
+  color: #111827;
+  font-size: 19px;
+  font-weight: 950;
+}
+
+/* =========================
+   SENDER ID STATUS
+========================= */
+
+.sender-status {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 18px;
+  padding: 15px;
+  border-radius: 16px;
+  background: #f9fafb;
+  border: 1px solid #eef2f7;
+}
+
+.sender-status span {
+  color: #64748b;
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.sender-status strong,
+.history-row strong {
+  padding: 5px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 950;
+}
+
+/* =========================
+   STATUS COLORS
+========================= */
+
+.pending {
+  color: #92400e;
+  background: #fef3c7;
+}
+
+.completed,
+.sent,
+.approved,
+.active {
+  color: #065f46;
+  background: #d1fae5;
+}
+
+.failed,
+.rejected,
+.suspended {
+  color: #991b1b;
+  background: #fee2e2;
+}
+
+.sender-summary-card {
+  position: relative;
+}
+
+.delete-sender-btn {
+  margin-top: 14px;
+  width: 100%;
+  height: 38px;
+  border: none;
+  border-radius: 12px;
+  color: #991b1b;
+  background: #fee2e2;
+  font-size: 12px;
+  font-weight: 900;
+  cursor: pointer;
+  transition: 0.25s ease;
+}
+
+.delete-sender-btn:hover {
+  background: #fecaca;
+  transform: translateY(-1px);
+}
+
+/* =========================
+   PRICING INFO
+========================= */
+
+.pricing-list {
+  display: grid;
+  gap: 14px;
+}
+
+.pricing-list div {
+  padding: 16px;
+  border-radius: 16px;
+  background: #f9fafb;
+  border: 1px solid #eef2f7;
+}
+
+.pricing-list span {
+  display: block;
+  color: #64748b;
+  font-size: 12px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.pricing-list strong {
+  display: block;
+  margin-top: 6px;
+  color: #111827;
+}
+
+/* =========================
+   HISTORY TABLE
+========================= */
+
+.history-table {
+  display: grid;
+  gap: 8px;
+}
+
+.history-row {
+  display: grid;
+  grid-template-columns: 120px 130px 1fr 110px 110px;
+  gap: 12px;
+  align-items: center;
+  padding: 14px 16px;
+  border-radius: 16px;
+  background: #f9fafb;
+  color: #374151;
+}
+
+.history-head {
+  background: #0f2742;
+  color: #ffffff;
+  font-size: 12px;
+  font-weight: 950;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media (max-width: 1200px) {
+  .sms-hero {
     flex-direction: column;
-    justify-content: center;
-    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.06);
-}
+  }
 
-.mini-label {
-    font-size: 0.76rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    color: #64748b;
-    letter-spacing: 0.06em;
-    margin-bottom: 0.3rem;
-}
-
-.mini-value {
-    font-size: 1rem;
-    font-weight: 700;
-    color: #0f172a;
-}
-
-.usage-card {
-    border: 1px solid #e5e7eb;
-    background: #ffffff;
-    border-radius: 20px;
-    padding: 1rem;
-    margin-bottom: 1.1rem;
-}
-
-.usage-top {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 0.75rem;
-    margin-bottom: 0.75rem;
-    flex-wrap: wrap;
-}
-
-.usage-label {
-    font-size: 0.85rem;
-    font-weight: 700;
-    color: #334155;
-}
-
-.usage-meta {
-    font-size: 0.82rem;
-    font-weight: 700;
-    color: #64748b;
-}
-
-.progress-track {
-    width: 100%;
-    height: 12px;
-    border-radius: 999px;
-    background: #e2e8f0;
-    overflow: hidden;
-    margin-bottom: 0.85rem;
-}
-
-.progress-used {
-    height: 100%;
-    border-radius: 999px;
-    background: linear-gradient(90deg, #2563eb 0%, #1d4ed8 100%);
-    transition: width 0.4s ease;
-}
-
-.usage-legend {
-    display: flex;
-    gap: 1rem;
-    flex-wrap: wrap;
-}
-
-.legend-item {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.45rem;
-    font-size: 0.82rem;
-    font-weight: 600;
-    color: #64748b;
-}
-
-.legend-dot {
-    width: 10px;
-    height: 10px;
-    border-radius: 999px;
-    display: inline-block;
-}
-
-.dot-blue {
-    background: #2563eb;
-}
-
-.dot-emerald {
-    background: #10b981;
-}
-
-.dot-slate {
-    background: #94a3b8;
-}
-
-.details-grid {
-    display: grid;
+  .summary-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 0.95rem;
-    margin-bottom: 1.25rem;
+  }
+
+  .sms-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .bundle-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .estimate-box {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .history-row {
+    grid-template-columns: 1fr;
+  }
 }
 
-.detail-item {
-    display: flex;
-    align-items: center;
-    gap: 0.9rem;
-    border: 1px solid #e5e7eb;
-    background: #ffffff;
-    border-radius: 20px;
-    padding: 1rem;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
+@media (max-width: 700px) {
+  .sms-hero {
+    padding: 24px;
+  }
 
-.detail-item:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 10px 24px rgba(15, 23, 42, 0.05);
-}
+  .sms-hero h1 {
+    font-size: 30px;
+  }
 
-.detail-icon {
-    width: 42px;
-    height: 42px;
-    border-radius: 14px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-}
+  .summary-grid,
+  .bundle-grid,
+  .estimate-box {
+    grid-template-columns: 1fr;
+  }
 
-.icon-indigo {
-    background: #eef2ff;
-    color: #4f46e5;
-}
+  .sms-card {
+    padding: 22px;
+  }
 
-.icon-blue {
-    background: #eff6ff;
-    color: #2563eb;
-}
-
-.icon-amber {
-    background: #fffbeb;
-    color: #d97706;
-}
-
-.icon-sky {
-    background: #f0f9ff;
-    color: #0284c7;
-}
-
-.detail-label {
-    font-size: 0.8rem;
-    color: #64748b;
-    font-weight: 600;
-    margin-bottom: 0.2rem;
-}
-
-.detail-value {
-    font-size: 1.02rem;
-    color: #0f172a;
-    font-weight: 700;
-}
-
-.card-footer {
-    display: flex;
-    justify-content: space-between;
-    gap: 1rem;
-    align-items: center;
-    flex-wrap: wrap;
-}
-
-.footer-info {
-    flex: 1 1 260px;
-}
-
-.footer-title {
-    font-size: 0.98rem;
-    font-weight: 700;
-    color: #0f172a;
-    margin-bottom: 0.25rem;
-}
-
-.footer-text {
-    font-size: 0.9rem;
-    line-height: 1.5;
-    color: #64748b;
-}
-
-.footer-actions {
-    display: flex;
-    gap: 0.75rem;
-    flex-wrap: wrap;
-}
-
-.btn {
-    min-height: 44px;
-    border-radius: 14px;
-    padding: 0 1rem;
-    font-size: 0.92rem;
-    font-weight: 700;
-    transition: all 0.2s ease;
-    cursor: pointer;
-    border: none;
-}
-
-.btn-secondary {
-    background: #ffffff;
-    color: #0f172a;
-    border: 1px solid #d1d5db;
-}
-
-.btn-secondary:hover {
-    background: #f8fafc;
-}
-
-.btn-primary {
-    background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
-    color: #ffffff;
-    box-shadow: 0 8px 18px rgba(37, 99, 235, 0.18);
-}
-
-.btn-primary:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 12px 24px rgba(37, 99, 235, 0.22);
-}
-
-@media (max-width: 768px) {
-    .details-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .hero-value {
-        font-size: 1.7rem;
-    }
-
-    .sms-card {
-        padding: 1.15rem;
-    }
-
-    .card-footer {
-        align-items: stretch;
-    }
-
-    .footer-actions {
-        width: 100%;
-    }
-
-    .btn {
-        flex: 1;
-    }
+  .hero-balance-card {
+    min-width: 100%;
+  }
 }
 </style>

@@ -347,8 +347,10 @@ async function fetchDashboard() {
 
   try {
     const response = await getWorkspaceDashboard(tenantCode)
+    console.log('Dashboard response print:', response.data)
 
     applyDashboardData(response.data)
+
   } catch (err) {
     error.value =
       err.response?.data?.error ||
