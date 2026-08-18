@@ -140,7 +140,7 @@
     min="10"
     max="100"
     step="1"
-    placeholder="Enter amount from 10 to 100"
+    placeholder="Enter amount from 1.00 to 100"
   >
 
   <small>
@@ -402,8 +402,8 @@
 
     </section>
 
-    <!-- HISTORY -->
-    <section class="sms-card">
+    <!-- HISTORY fontt -->
+    <!-- <section class="sms-card">
 
       <div class="card-header">
         <div>
@@ -442,7 +442,7 @@
 
       </div>
 
-    </section>
+    </section> -->
 
     <div
   v-if="deleteSenderModalVisible"
@@ -832,10 +832,7 @@ const payWithPaystack = async () => {
 
   } catch (error) {
 
-    console.error(
-      'Failed to initialize wallet top-up:',
-      error
-    )
+
 
     showToast(
       'error',
@@ -912,10 +909,6 @@ const verifyWalletPayment = async (
 
   } catch (error) {
 
-    console.error(
-      'Wallet verification failed:',
-      error
-    )
 
     showToast(
       'error',
@@ -1031,10 +1024,7 @@ const confirmDeleteSenderId = async () => {
 
   } catch (error) {
 
-    console.error(
-      'Failed to delete sender ID:',
-      error
-    )
+
 
     showToast(
       'error',
@@ -1114,10 +1104,6 @@ const loadLatestSenderId = async () => {
 
   } catch (error) {
 
-    console.error(
-      'Failed to load latest sender ID:',
-      error
-    )
 
     senderId.id = null
     senderId.activeSenderId = ''
@@ -1148,7 +1134,7 @@ const isValidSmsPurchaseAmount = computed(() => {
     return false
   }
 
-  if (amount < 10) {
+  if (amount < 1) {
     return false
   }
 
@@ -1330,10 +1316,7 @@ const loadClientSmsWallet = async () => {
 
   } catch (error) {
 
-    console.error(
-      'Failed to load client SMS wallet:',
-      error
-    )
+
 
     showToast(
       'error',
@@ -1518,12 +1501,12 @@ const requestTopUp = async () => {
     return
   }
 
-  if (amount < 10) {
+  if (amount < 1) {
 
     showToast(
       'warn',
       'Validation',
-      'You cannot buy less than GHS 10.00 worth of SMS.'
+      'You cannot buy less than GHS 1.00 worth of SMS.'
     )
 
     return
@@ -1608,10 +1591,7 @@ const requestTopUp = async () => {
 
   } catch (error) {
 
-    console.error(
-      'Failed to purchase SMS credits:',
-      error
-    )
+
 
     showToast(
       'error',

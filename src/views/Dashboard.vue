@@ -196,8 +196,8 @@
 
                         <!-- comment local url starts here -->
 
-                        <!--
-                        <div class="domain-info">
+
+                        <!-- <div class="domain-info">
                             <div class="domain-row">
                                 <span>Environment</span>
                                 <strong>{{ tenant.environment }}</strong>
@@ -215,11 +215,14 @@
                                     {{ tenant.defaultLocalDomain }}
                                 </a>
                             </div>
-                        </div>
-                        -->
+                        </div> -->
 
-                        <!-- comment local url ends here -->
+                         <!-- comment local url ends here  fontt -->
+
+
+
                     </div>
+
 
                     <div class="domain-actions">
                         <button class="btn btn-dark btn-small" @click="openSchoolSystem">

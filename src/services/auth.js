@@ -266,10 +266,7 @@ const handleDeleteSenderId = async () => {
 
   } catch (error) {
 
-    console.error(
-      'Failed to delete sender ID:',
-      error
-    )
+
 
     showToast(
       'error',

@@ -49,11 +49,11 @@ const model = ref([
 
 
 
-    //   {
-    //     label: 'SMS',
-    //     icon: 'pi pi-fw pi-comments', //fontt
-    //     to: '/sms',
-    //   },
+      {
+        label: 'SMS',
+        icon: 'pi pi-fw pi-comments', //fontt
+        to: '/sms',
+      },
 
 
 

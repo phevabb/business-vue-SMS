@@ -495,10 +495,7 @@ const loadSenderIds = async () => {
 
   } catch (error) {
 
-    console.error(
-      'Failed to load sender IDs:',
-      error
-    )
+
 
     showToast(
       'error',
@@ -554,10 +551,7 @@ const confirmApproveSenderId = async () => {
 
   } catch (error) {
 
-    console.error(
-      'Failed to approve sender ID:',
-      error
-    )
+
 
     showToast(
       'error',
@@ -633,10 +627,7 @@ const confirmRejectSenderId = async () => {
 
   } catch (error) {
 
-    console.error(
-      'Failed to reject sender ID:',
-      error
-    )
+
 
     showToast(
       'error',
@@ -692,10 +683,7 @@ const confirmDeleteSenderId = async () => {
 
   } catch (error) {
 
-    console.error(
-      'Failed to delete sender ID:',
-      error
-    )
+
 
     showToast(
       'error',

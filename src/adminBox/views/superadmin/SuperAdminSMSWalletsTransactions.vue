@@ -621,10 +621,7 @@ const loadWallets = async () => {
 
   } catch (error) {
 
-    console.error(
-      'Failed to load SMS wallets:',
-      error
-    )
+
 
     showToast(
       'error',
@@ -653,10 +650,7 @@ const loadAllTransactions = async () => {
 
   } catch (error) {
 
-    console.error(
-      'Failed to load wallet transactions:',
-      error
-    )
+
 
     showToast(
       'error',
@@ -690,10 +684,7 @@ const selectWallet = async (wallet) => {
 
   } catch (error) {
 
-    console.error(
-      'Failed to load tenant wallet transactions:',
-      error
-    )
+
 
     showToast(
       'error',
