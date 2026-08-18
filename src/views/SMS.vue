@@ -140,7 +140,7 @@
     min="10"
     max="100"
     step="1"
-    placeholder="Enter amount from 1.00 to 100"
+    placeholder="Enter amount from 10.00 to 100"
   >
 
   <small>
@@ -1134,7 +1134,7 @@ const isValidSmsPurchaseAmount = computed(() => {
     return false
   }
 
-  if (amount < 1) {
+  if (amount < 10) {  // fontt
     return false
   }
 
