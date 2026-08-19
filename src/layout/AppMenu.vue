@@ -51,7 +51,7 @@ const model = ref([
 
       {
         label: 'SMS',
-        icon: 'pi pi-fw pi-comments', //fontt
+        icon: 'pi pi-fw pi-comments',
         to: '/sms',
       },
 

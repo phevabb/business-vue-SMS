@@ -1134,7 +1134,7 @@ const isValidSmsPurchaseAmount = computed(() => {
     return false
   }
 
-  if (amount < 10) {  // fontt
+  if (amount < 10) {
     return false
   }
 
